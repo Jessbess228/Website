@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Kawaii Dress-Up Game</title>
+    <style>
+        :root {
+            --background-color: #ffe4e1;
+            --header-color: #ffb6c1;
+            --text-color: #ff69b4;
+            --container-background: #fffaf0;
+            --button-color: #ff69b4;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .header {
+            background-color: var(--header-color);
+            padding: 20px;
+            border-bottom: 5px solid var(--text-color);
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .container {
+            margin: 30px auto;
+            padding: 20px;
+            max-width: 800px;
+            background: var(--container-background);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .settings-title {
+            font-size: 2em;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .color-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .color-button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .color-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            color: var(--text-color);
+            text-decoration: none;
+            border: 2px solid var(--text-color);
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: background-color 0.2s, color 0.2s;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: var(--text-color);
+            color: #fff;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 1em;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        🌸 Settings 🌸
+    </div>
+    <div class="container">
+        <div class="settings-title">Choose Your Color Scheme</div>
+        <div class="color-options">
+            <button class="color-button" style="background-color: #ffe4e1;" onclick="changeColors('#ffe4e1', '#ffb6c1', '#ff69b4', '#fffaf0', '#ff69b4')">
+                Pink
+            </button>
+            <button class="color-button" style="background-color: #d6f5d6;" onclick="changeColors('#d6f5d6', '#a3d9a5', '#5cab5c', '#f1fff1', '#5cab5c')">
+                Green
+            </button>
+            <button class="color-button" style="background-color: #d6eaff;" onclick="changeColors('#d6eaff', '#a3c9f9', '#5c94d6', '#f1f8ff', '#5c94d6')">
+                Blue
+            </button>
+            <button class="color-button" style="background-color: #fff2cc;" onclick="changeColors('#fff2cc', '#f5da85', '#d6b45c', '#fff9e6', '#d6b45c')">
+                Yellow
+            </button>
+        </div>
+        <a href="index.html" class="back-button">Back to Home</a>
+    </div>
+    <div class="footer">
+        🌷 Customize your experience! 🌷
+    </div>
+
+    <script>
+        function changeColors(backgroundColor, headerColor, textColor, containerBackground, buttonColor) {
+            document.documentElement.style.setProperty('--background-color', backgroundColor);
+            document.documentElement.style.setProperty('--header-color', headerColor);
+            document.documentElement.style.setProperty('--text-color', textColor);
+            document.documentElement.style.setProperty('--container-background', containerBackground);
+            document.documentElement.style.setProperty('--button-color', buttonColor);
+        }
+    </script>
+</body>
+</html>

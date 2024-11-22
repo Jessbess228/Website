@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wardrobe Dress-Up Game</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: url('assets/images/background.jpg') no-repeat center center fixed;
+            background-color: #fff3f1; /* Light pink */
+            background-size: cover;
+            color: #ff69b4; /* Hot pink */
+            text-align: center;
+        }
+
+        .header {
+            background-color: rgba(255, 182, 193, 0.8); /* Semi-transparent Pink */
+            padding: 20px;
+            border-bottom: 5px solid #ff69b4;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .container {
+            margin: 30px auto;
+            padding: 20px;
+            max-width: 1200px;
+            background: rgba(255, 250, 240, 0.9); /* Semi-transparent Ivory */
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .side-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .side-images img {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            border: 3px solid #ff69b4;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+
+        .avatar-main {
+            width: 350px;
+            height: auto;
+            border: 5px solid #ff69b4;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            margin-top: 30px;
+            font-size: 1em;
+            font-weight: bold;
+            background-color: #ffcede;
+            color: #ff6db6;
+            text-decoration: none;
+            border: 2px solid #ffa0d0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: background-color 0.2s, color 0.2s;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #ff69b4;
+            color: #ffffff;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 1em;
+            color: #ff6db6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        🌸 Dress Up 🌸
+    </div>
+    <div class="container">
+        <!-- Left Side Images -->
+        <div class="side-images">
+            <img src="assets/images/avatar2.jpg" alt="Side Image 1">
+            <img src="assets/images/avatar3.jpg" alt="Side Image 2">
+            <img src="assets/images/avatar4.jpg" alt="Side Image 3">
+        </div>
+
+        <!-- Main Avatar -->
+        <img id="avatarImage" src="assets/images/Base.png" alt="Selected Avatar" class="avatar-main">
+
+        <!-- Right Side Images -->
+        <div class="side-images">
+            <img src="assets/images/avatar5.jpg" alt="Side Image 4">
+            <img src="assets/images/avatar6.jpg" alt="Side Image 5">
+            <img src="assets/images/avatar7.jpg" alt="Side Image 6">
+        </div>
+    </div>
+    <a href="index.html" class="back-button">Back to Home</a>
+    <div class="footer">
+        🌷 Enjoy dressing up your avatar in the kawaii world! 🌷
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const avatarImage = params.get('image');
+        document.getElementById('avatarImage').src = `assets/images/Base.png`;
+    </script>
+</body>
+</html>
