@@ -1,4 +1,4 @@
 jessicaberry.info
 
 Plans for this Website:
-Data analytics from puppy scraper project
+Data dashboard from puppy scraper project
