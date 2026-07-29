@@ -1,0 +1,18 @@
+:root {
+  --bg: #fff4e9;
+  --text: #2c2a29;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  gap: 1rem;
+}
+
