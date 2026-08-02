@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Link as RouterLink, useParams } from 'react-router-dom'
+import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
 
@@ -36,14 +37,7 @@ export function ProjectPage() {
       <Box component="main">
         <Container maxWidth="md" sx={{ pt: { xs: 5, md: 8 }, pb: 2 }}>
           <Box sx={{ maxWidth: 720, mx: 'auto' }}>
-            <Button
-              component={RouterLink}
-              to="/"
-              color="primary"
-              sx={{ mb: 3, px: 0, minWidth: 0 }}
-            >
-              ← Back home
-            </Button>
+            <BackHome />
 
             <Typography
               variant="overline"
@@ -59,19 +53,6 @@ export function ProjectPage() {
               sx={{
                 fontSize: { xs: '2.25rem', md: '3.25rem' },
                 mb: 2,
-                position: 'relative',
-                width: 'fit-content',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  right: '12%',
-                  bottom: 4,
-                  height: 3,
-                  bgcolor: 'primary.main',
-                  borderRadius: 2,
-                  transform: 'rotate(-1deg)',
-                },
               }}
             >
               {project.title}

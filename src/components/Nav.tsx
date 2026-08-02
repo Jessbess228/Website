@@ -36,8 +36,9 @@ export function Nav() {
           color="text.primary"
           sx={{
             textDecoration: 'none',
-            fontFamily: '"Fraunces", Georgia, serif',
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
             fontWeight: 600,
+            lineHeight: 1.2,
             '&:hover': { color: 'primary.main' },
           }}
         >

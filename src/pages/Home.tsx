@@ -43,26 +43,7 @@ export function Home() {
             }}
           >
             Jessica
-            <Box
-              component="span"
-              sx={{
-                display: 'block',
-                position: 'relative',
-                width: 'fit-content',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  right: '8%',
-                  bottom: 6,
-                  height: 3,
-                  bgcolor: 'primary.main',
-                  borderRadius: 2,
-                  transform: 'rotate(-1.2deg)',
-                  opacity: 0.9,
-                },
-              }}
-            >
+            <Box component="span" sx={{ display: 'block' }}>
               Berry
             </Box>
           </Typography>
@@ -131,7 +112,7 @@ export function Home() {
           </Stack>
         </Section>
 
-        <Section id="projects" eyebrow="Selected work" title="Projects" wide>
+        <Section id="projects" eyebrow="Selected work" title="Projects">
           <Box
             sx={{
               display: 'grid',

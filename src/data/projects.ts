@@ -11,11 +11,11 @@ export const projects: Project[] = [
     slug: 'puppies',
     title: 'Puppy Data Collection',
     summary:
-      'Scraped dog data from API loaded it to SQlite database',
-    stack: ['Python', 'SQlite', 'API'],
+      'Fetches dog breed data from The Dog API into SQLite, with a searchable Django API.',
+    stack: ['Python', 'Django', 'SQLite', 'REST API'],
     body: [
-      'Using a Python script I ethically scraped an API from the website "The Dog API", and loaded it into a SQlite database.',
-      'This project strengthened my understanding of API endpoints, python, use cases for different database types, and ethical data collection using scrapers.',
+      'This project fetches dog profiles from The Dog API, stores them in SQLite via the Django ORM, and exposes a searchable REST API for the portfolio.',
+      'A background job re-queries the Dog API on a code-configured interval so the collection grows over time instead of being wiped each run.',
     ],
   },
 ]

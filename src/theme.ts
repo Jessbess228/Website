@@ -6,6 +6,7 @@ const ink = '#2A221F'
 const cocoa = '#6B4F45'
 const burgundy = '#7A1F2B'
 const blush = '#E8D5CF'
+const borderGrey = '#3E3A38'
 
 export const theme = createTheme({
   palette: {
@@ -27,30 +28,34 @@ export const theme = createTheme({
       secondary: cocoa,
     },
     divider: blush,
+    // Standard MUI grey scale — use as borderColor: 'grey.500'
+    grey: {
+      500: borderGrey,
+    },
   },
   typography: {
     fontFamily: '"DM Sans", system-ui, sans-serif',
     h1: {
-      fontFamily: '"Fraunces", Georgia, serif',
+      fontFamily: '"Cormorant Garamond", Georgia, serif',
       fontWeight: 600,
       letterSpacing: '-0.02em',
       lineHeight: 1.1,
     },
     h2: {
-      fontFamily: '"Fraunces", Georgia, serif',
+      fontFamily: '"Cormorant Garamond", Georgia, serif',
       fontWeight: 600,
       letterSpacing: '-0.01em',
       fontSize: '1.75rem',
       lineHeight: 1.25,
     },
     h3: {
-      fontFamily: '"Fraunces", Georgia, serif',
+      fontFamily: '"Cormorant Garamond", Georgia, serif',
       fontWeight: 500,
       fontSize: '1.25rem',
       lineHeight: 1.35,
     },
     h4: {
-      fontFamily: '"Fraunces", Georgia, serif',
+      fontFamily: '"Cormorant Garamond", Georgia, serif',
       fontWeight: 500,
       fontSize: '1.1rem',
     },
@@ -139,6 +144,19 @@ export const theme = createTheme({
           backgroundColor: 'rgba(247, 241, 232, 0.85)',
           backdropFilter: 'blur(10px)',
           borderBottom: `1px solid ${blush}`,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: cream,
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: borderGrey,
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: cocoa,
+          },
         },
       },
     },
