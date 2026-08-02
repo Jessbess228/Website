@@ -9,7 +9,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: 'puppies',
-    title: 'Puppy Data Collection',
+    title: 'Dog Breed Data Collection',
     summary:
       'Fetches dog breed data from The Dog API into SQLite, with a searchable Django API.',
     stack: ['Python', 'Django', 'SQLite', 'REST API'],
