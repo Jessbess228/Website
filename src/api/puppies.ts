@@ -76,11 +76,7 @@ async function readApiJson<T>(response: Response, label: string): Promise<T> {
     )
   }
 
-  try {
-    return (await response.json()) as T
-  } catch {
-    throw new Error(`${label}: response body was not valid JSON.`)
-  }
+  return (await response.json()) as T
 }
 
 async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal): Promise<T> {
