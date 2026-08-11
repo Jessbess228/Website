@@ -200,8 +200,8 @@ nohup npx --yes serve -s dist -l 9000 > /tmp/serve-9000.log 2>&1 &
 
 | Command | What it solves |
 |---------|----------------|
-| `pkill -f 'serve -s dist' \|\| true` | Kills the previous `serve` on :9000 so you are not stuck on an old `dist/` (or a dead/orphaned process). `\|\| true` keeps the script going if nothing matched. |
-| `nohup npx --yes serve -s dist -l 9000 > /tmp/serve-9000.log 2>&1 &` | Serves the freshly built `dist/` in the background and keeps it running after you `exit` SSH (avoids the 502 from the process dying on logout). Logs go to `/tmp/serve-9000.log`. |
+| `pkill -f 'serve -s dist' \|\| true` | Kills the previous `serve` on :9000 so we are not stuck on an old `dist/` (an ended process). `\|\| true` keeps the script going if nothing matched. |
+| `nohup npx --yes serve -s dist -l 9000 > /tmp/serve-9000.log 2>&1 &` | Serves the freshly built `dist/` in the background and keeps it running after you `exit` SSH (avoids a 502 error due to the service dying on root user logout). Logs go to `/tmp/serve-9000.log`. |
 
 ---
 
