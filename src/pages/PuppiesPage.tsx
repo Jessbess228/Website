@@ -57,6 +57,7 @@ export function PuppiesPage() {
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [filtersError, setFiltersError] = useState<string | null>(null)
 
   useEffect(() => {
     const handle = window.setTimeout(() => setDebounced(params), 300)
@@ -65,6 +66,7 @@ export function PuppiesPage() {
 
   useEffect(() => {
     const controller = new AbortController()
+    setFiltersError(null)
     fetchPuppyFilters(controller.signal)
       .then((next) => {
         setFilters(next)
@@ -77,9 +79,9 @@ export function PuppiesPage() {
         }))
       })
       .catch((err: unknown) => {
-        if ((err as Error).name !== 'AbortError') {
-          console.error(err)
-        }
+        if ((err as Error).name === 'AbortError') return
+        console.error(err)
+        setFiltersError(err instanceof Error ? err.message : 'Could not load puppy filters.')
       })
     return () => controller.abort()
   }, [])
@@ -96,9 +98,7 @@ export function PuppiesPage() {
       })
       .catch((err: unknown) => {
         if ((err as Error).name === 'AbortError') return
-        setError(
-          'Could not reach the puppy API. Start it with `python manage.py runserver 8080` in puppy_data-collection.',
-        )
+        setError(err instanceof Error ? err.message : 'Could not load puppies.')
         setPuppies([])
         setCount(0)
       })
@@ -305,9 +305,17 @@ export function PuppiesPage() {
               </Stack>
             </Stack>
 
+            {filtersError && (
+              <Typography color="warning.main" sx={{ mb: 2 }}>
+                {filtersError}
+              </Typography>
+            )}
+
             {error && (
-              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
-                <Typography color="error">{error}</Typography>
+              <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ mb: 3 }}>
+                <Typography color="error" sx={{ flex: 1 }}>
+                  {error}
+                </Typography>
                 <Button onClick={retrySearch} variant="outlined" size="small" color="primary">
                   Retry
                 </Button>
