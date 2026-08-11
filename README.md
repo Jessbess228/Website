@@ -115,6 +115,8 @@ python manage.py migrate
 
 Start Django with **`nohup`** so it survives SSH logout (`-u` unbuffers logs):
 
+`nohup` means **no hangup**. It starts a command so it ignores the `SIGHUP` signal the shell sends when you close SSH / log out. Without it (even with `&`), the process often dies when you `exit`. With it, the process keeps running in the background after you disconnect. Redirecting to a log file (`> /tmp/….log 2>&1`) also captures output so it isn’t tied to your terminal.
+
 ```bash
 cd /home/ec2-user/puppy_data-collection
 source .venv/bin/activate
@@ -178,6 +180,28 @@ lsof -i :9000
 curl -I http://127.0.0.1:9000/
 # expect 200
 ```
+
+#### Redeploy frontend after `git pull` / `npm run build`
+
+`serve` keeps serving whatever was in `dist/` when it started. After you pull code changes and rebuild, **restart** it so the new bundle is live (otherwise the site can keep showing old JS/UI, including outdated error messages):
+
+```bash
+cd /home/ec2-user/Website
+git pull
+npm install --ignore-scripts   # if dependencies changed
+npm run build
+
+# Stop the old static server (ignore error if none is running)
+pkill -f 'serve -s dist' || true
+
+# Start again under nohup so it survives SSH logout
+nohup npx --yes serve -s dist -l 9000 > /tmp/serve-9000.log 2>&1 &
+```
+
+| Command | What it solves |
+|---------|----------------|
+| `pkill -f 'serve -s dist' \|\| true` | Kills the previous `serve` on :9000 so you are not stuck on an old `dist/` (or a dead/orphaned process). `\|\| true` keeps the script going if nothing matched. |
+| `nohup npx --yes serve -s dist -l 9000 > /tmp/serve-9000.log 2>&1 &` | Serves the freshly built `dist/` in the background and keeps it running after you `exit` SSH (avoids the 502 from the process dying on logout). Logs go to `/tmp/serve-9000.log`. |
 
 ---
 
