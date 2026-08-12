@@ -1,0 +1,19 @@
+[Unit]
+Description=Puppy data Django API (runserver on :8080)
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/puppy_data-collection
+Environment=PATH=/home/ec2-user/puppy_data-collection/.venv/bin:/usr/bin
+ExecStart=/home/ec2-user/puppy_data-collection/.venv/bin/python -u manage.py runserver 0.0.0.0:8080
+Restart=always
+RestartSec=3
+
+StandardOutput=append:/tmp/django-8080.log
+StandardError=append:/tmp/django-8080.log
+
+[Install]
+WantedBy=multi-user.target

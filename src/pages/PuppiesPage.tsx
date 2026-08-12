@@ -28,6 +28,7 @@ import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
 
+// Intro copy for this page (also listed on the home project grid)
 const project = getProjectBySlug('puppies')
 
 const DEFAULT_LIFESPAN: [number, number] = [0, 20]
@@ -39,10 +40,18 @@ const emptyFilters: PuppyFilters = {
   lifespan_max: DEFAULT_LIFESPAN[1],
 }
 
+/**
+ * Live dog-breed search UI backed by the Django API (`/api/puppies/…`).
+ * Filter changes are debounced so we don't hit the API on every keystroke.
+ */
 export function PuppiesPage() {
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+
+  // Option lists from the filters endpoint (sizes, groups, lifespan bounds)
   const [filters, setFilters] = useState<PuppyFilters>(emptyFilters)
+  // Local slider position (updated while dragging; committed into params on release)
   const [lifespanRange, setLifespanRange] = useState<[number, number]>(DEFAULT_LIFESPAN)
+  // Immediate form state
   const [params, setParams] = useState<PuppySearchParams>({
     q: '',
     name: '',
@@ -51,7 +60,9 @@ export function PuppiesPage() {
     min_lifespan: DEFAULT_LIFESPAN[0],
     max_lifespan: DEFAULT_LIFESPAN[1],
   })
+  // What we actually query with (lags params by 300ms)
   const [debounced, setDebounced] = useState(params)
+  // Bumping this re-runs the search effect without changing filters
   const [retryKey, setRetryKey] = useState(0)
   const [puppies, setPuppies] = useState<Puppy[]>([])
   const [count, setCount] = useState(0)
@@ -59,11 +70,13 @@ export function PuppiesPage() {
   const [error, setError] = useState<string | null>(null)
   const [filtersError, setFiltersError] = useState<string | null>(null)
 
+  // Debounce: wait 300ms after the last edit before searching
   useEffect(() => {
     const handle = window.setTimeout(() => setDebounced(params), 300)
     return () => window.clearTimeout(handle)
   }, [params])
 
+  // Load filter dropdown options once on mount
   useEffect(() => {
     const controller = new AbortController()
     setFiltersError(null)
@@ -72,6 +85,7 @@ export function PuppiesPage() {
         setFilters(next)
         const range: [number, number] = [next.lifespan_min, next.lifespan_max]
         setLifespanRange(range)
+        // Align search params to the API's real lifespan bounds
         setParams((prev) => ({
           ...prev,
           min_lifespan: range[0],
@@ -83,9 +97,11 @@ export function PuppiesPage() {
         console.error(err)
         setFiltersError(err instanceof Error ? err.message : 'Could not load puppy filters.')
       })
+    // Cancel the request if the user navigates away
     return () => controller.abort()
   }, [])
 
+  // Re-fetch results whenever debounced filters or retryKey change
   useEffect(() => {
     const controller = new AbortController()
     setLoading(true)
@@ -103,6 +119,7 @@ export function PuppiesPage() {
         setCount(0)
       })
       .finally(() => {
+        // Don't clear loading if this request was aborted for a newer one
         if (!controller.signal.aborted) {
           setLoading(false)
         }
@@ -171,6 +188,7 @@ export function PuppiesPage() {
               Browse the collection
             </Typography>
 
+            {/* Search controls → update `params` → debounce → API */}
             <Stack spacing={2} sx={{ mb: 3 }}>
               <TextField
                 label="Search"
@@ -263,10 +281,12 @@ export function PuppiesPage() {
                     step={1}
                     valueLabelDisplay="auto"
                     disableSwap
+                    // Live UI while dragging
                     onChange={(_event, value) => {
                       const range = value as [number, number]
                       setLifespanRange(range)
                     }}
+                    // Only push into search params when the user releases
                     onChangeCommitted={(_event, value) => {
                       const [min, max] = value as [number, number]
                       setParams((prev) => ({
@@ -305,6 +325,7 @@ export function PuppiesPage() {
               </Stack>
             </Stack>
 
+            {/* Status messages */}
             {filtersError && (
               <Typography color="warning.main" sx={{ mb: 2 }}>
                 {filtersError}
@@ -335,6 +356,7 @@ export function PuppiesPage() {
               </Typography>
             )}
 
+            {/* Result cards */}
             <Box
               sx={{
                 display: 'grid',

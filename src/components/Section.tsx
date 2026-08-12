@@ -3,13 +3,16 @@ import Typography from '@mui/material/Typography'
 import type { ReactNode } from 'react'
 
 type SectionProps = {
+  /** Optional HTML id for nav hash links (e.g. #experience) */
   id?: string
   eyebrow?: string
   title: string
   children: ReactNode
+  /** Wider content column (default is 720px) */
   wide?: boolean
 }
 
+/** Shared home-page section: eyebrow + title + children. */
 export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
   return (
     <Box
@@ -17,6 +20,7 @@ export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
       id={id}
       sx={{
         py: { xs: 5, md: 7 },
+        // Keeps hash targets below the sticky nav when scrolling
         scrollMarginTop: 80,
       }}
     >

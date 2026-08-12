@@ -1,0 +1,22 @@
+[Unit]
+Description=Jessica Berry portfolio static site (serve dist on :9000)
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/Website
+ExecStart=/usr/bin/npx --yes serve -s dist -l 9000
+Restart=always
+RestartSec=3
+Environment=NODE_ENV=production
+
+# Keep running after SSH logout (do not kill with user session)
+KillMode=control-group
+
+StandardOutput=append:/tmp/serve-9000.log
+StandardError=append:/tmp/serve-9000.log
+
+[Install]
+WantedBy=multi-user.target

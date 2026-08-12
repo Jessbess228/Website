@@ -10,9 +10,11 @@ import type { Project } from '../data/projects'
 
 type ProjectTileProps = {
   project: Project
+  /** Used to stagger the entrance animation across the grid */
   index?: number
 }
 
+/** Home-page card that navigates to `/${project.slug}`. */
 export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
   return (
     <Card

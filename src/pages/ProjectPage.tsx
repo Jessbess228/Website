@@ -11,11 +11,18 @@ import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
 
+/**
+ * Generic project write-up page.
+ * Content comes from `projects` in src/data/projects.ts, keyed by URL slug
+ * (e.g. /this-website → slug "this-website").
+ */
 export function ProjectPage() {
   const { slug } = useParams<{ slug: string }>()
   const project = slug ? getProjectBySlug(slug) : undefined
+  // Skip fade animation when the user prefers reduced motion
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
+  // Unknown slug (or typo in the URL) → simple not-found UI
   if (!project) {
     return (
       <Container maxWidth="sm" sx={{ py: 10, textAlign: 'center' }}>
@@ -39,6 +46,7 @@ export function ProjectPage() {
           <Box sx={{ maxWidth: 720, mx: 'auto' }}>
             <BackHome />
 
+            {/* Header: label, title, one-line summary, tech chips */}
             <Typography
               variant="overline"
               color="primary"
@@ -74,13 +82,37 @@ export function ProjectPage() {
               ))}
             </Stack>
 
-            <Stack spacing={2}>
-              {project.body.map((paragraph) => (
-                <Typography key={paragraph} variant="body1">
-                  {paragraph}
-                </Typography>
-              ))}
-            </Stack>
+            {/*
+              Two content shapes:
+              - sections: titled blocks (used by "This website")
+              - body: plain paragraphs (used by older project entries)
+            */}
+            {project.sections && project.sections.length > 0 ? (
+              <Stack spacing={4}>
+                {project.sections.map((section) => (
+                  <Box key={section.subtitle}>
+                    <Typography
+                      variant="h3"
+                      component="h2"
+                      sx={{ mb: 1.5, fontSize: { xs: '1.35rem', md: '1.5rem' } }}
+                    >
+                      {section.subtitle}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      {section.body}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+            ) : (
+              <Stack spacing={2}>
+                {project.body.map((paragraph) => (
+                  <Typography key={paragraph} variant="body1">
+                    {paragraph}
+                  </Typography>
+                ))}
+              </Stack>
+            )}
           </Box>
 
           <Footer />

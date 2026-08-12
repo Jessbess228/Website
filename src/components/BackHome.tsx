@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button'
 import { Link as RouterLink } from 'react-router-dom'
 
+/** Link back to the resume home page — used on project / puppies pages. */
 export function BackHome() {
   return (
     <Button

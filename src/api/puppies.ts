@@ -1,3 +1,4 @@
+/** One breed row returned by GET /api/puppies/ */
 export type Puppy = {
   id: number
   name: string
@@ -10,6 +11,7 @@ export type Puppy = {
   updated_at: string
 }
 
+/** Dropdown / slider bounds from GET /api/puppies/filters/ */
 export type PuppyFilters = {
   sizes: string[]
   breed_groups: string[]
@@ -17,6 +19,7 @@ export type PuppyFilters = {
   lifespan_max: number
 }
 
+/** Query params the search UI can send to the list endpoint */
 export type PuppySearchParams = {
   name?: string
   size?: string
@@ -31,6 +34,7 @@ export type PuppyListResponse = {
   results: Puppy[]
 }
 
+/** Build `?key=value&…` from params; skip empty/undefined values. */
 function toQuery(params: PuppySearchParams): string {
   const search = new URLSearchParams()
   for (const [key, value] of Object.entries(params)) {
@@ -41,9 +45,10 @@ function toQuery(params: PuppySearchParams): string {
   return qs ? `?${qs}` : ''
 }
 
+/** Map HTTP status codes to short, human-readable errors for the UI. */
 function statusMessage(label: string, status: number): string {
   if (status === 502 || status === 503 || status === 504) {
-    return `${label}: gateway error (${status}). The proxy is up but Django on :8080 (or serve on :9000) is probably down — restart with nohup after SSH login.`
+    return `${label}: gateway error (${status}). The proxy is up but Django on :8080 (or serve on :9000) is probably down`
   }
   if (status === 404) {
     return `${label}: not found (404). Check the API route exists on Django.`
@@ -57,17 +62,15 @@ function statusMessage(label: string, status: number): string {
   return `${label}: request failed (${status}).`
 }
 
+/**
+ * Ensure the response is OK JSON before parsing.
+ * In production, /api is proxied by Caddy to Django; locally Vite does the same.
+ */
 async function readApiJson<T>(response: Response, label: string): Promise<T> {
   const contentType = response.headers.get('content-type') ?? ''
 
   if (!response.ok) {
     throw new Error(statusMessage(label, response.status))
-  }
-
-  if (contentType.includes('text/html')) {
-    throw new Error(
-      `${label}: got HTML instead of JSON. Caddy is likely proxying /api to the static site — use handle /api* → 127.0.0.1:8080 (not only /api/*).`,
-    )
   }
 
   if (!contentType.includes('application/json')) {
@@ -79,11 +82,13 @@ async function readApiJson<T>(response: Response, label: string): Promise<T> {
   return (await response.json()) as T
 }
 
+/** Shared GET helper: network errors + JSON validation. */
 async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal): Promise<T> {
   let response: Response
   try {
     response = await fetch(path, { signal })
   } catch (err) {
+    // Abort is expected when the component unmounts or filters change quickly
     if ((err as Error).name === 'AbortError') throw err
     throw new Error(
       `${label}: network error — could not reach ${path}. Locally run Django on :8080; on EC2 check Caddy and nohup processes.`,
@@ -92,6 +97,7 @@ async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal):
   return readApiJson<T>(response, label)
 }
 
+/** Search / list breeds. `signal` lets React cancel in-flight requests. */
 export async function fetchPuppies(
   params: PuppySearchParams = {},
   signal?: AbortSignal,
@@ -107,6 +113,7 @@ export async function fetchPuppies(
   return data
 }
 
+/** Load filter option lists and lifespan min/max for the slider. */
 export async function fetchPuppyFilters(signal?: AbortSignal): Promise<PuppyFilters> {
   const data = await apiGetJson<PuppyFilters>('/api/puppies/filters/', 'Puppy filters', signal)
   if (!data || !Array.isArray(data.sizes) || !Array.isArray(data.breed_groups)) {

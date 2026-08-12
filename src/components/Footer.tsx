@@ -3,6 +3,7 @@ import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 import { contact } from '../data/resume'
 
+/** Page footer with email, location, and year. */
 export function Footer() {
   return (
     <Box

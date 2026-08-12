@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 
+// Brand palette — cream background, burgundy accent, cocoa secondary text
 const cream = '#F7F1E8'
 const ivory = '#FFFCFA'
 const ink = '#2A221F'
@@ -8,6 +9,10 @@ const burgundy = '#7A1F2B'
 const blush = '#E8D5CF'
 const borderGrey = '#3E3A38'
 
+/**
+ * Site-wide MUI theme (wired up in main.tsx via ThemeProvider).
+ * Display fonts: Cormorant Garamond for headings, DM Sans for body.
+ */
 export const theme = createTheme({
   palette: {
     mode: 'light',
@@ -28,7 +33,7 @@ export const theme = createTheme({
       secondary: cocoa,
     },
     divider: blush,
-    // Standard MUI grey scale — use as borderColor: 'grey.500'
+    // Use as borderColor: 'grey.500' for form/control outlines
     grey: {
       500: borderGrey,
     },

@@ -7,12 +7,14 @@ import Typography from '@mui/material/Typography'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { contact } from '../data/resume'
 
+// In-page anchors — only useful on the home page
 const homeLinks = [
   { label: 'Experience', href: '#experience' },
   { label: 'Projects', href: '#projects' },
   { label: 'Skills', href: '#skills' },
 ]
 
+/** Sticky top bar: brand + section links (home) + contact CTA. */
 export function Nav() {
   const { pathname } = useLocation()
   const onHome = pathname === '/'
@@ -29,6 +31,7 @@ export function Nav() {
           py: 0.5,
         }}
       >
+        {/* Always link back to home */}
         <Typography
           component={RouterLink}
           to="/"
@@ -56,6 +59,7 @@ export function Nav() {
             justifyContent: 'flex-end',
           }}
         >
+          {/* Hide section jumps on project/puppies pages */}
           {onHome &&
             homeLinks.map((link) => (
               <Link

@@ -16,10 +16,16 @@ import {
   summary,
 } from '../data/resume'
 
+/**
+ * Landing / resume page.
+ * Copy lives in src/data/resume.ts and src/data/projects.ts so this file
+ * stays mostly layout + section structure.
+ */
 export function Home() {
   return (
     <Box component="main">
       <Container maxWidth="md" sx={{ pt: { xs: 6, md: 10 }, pb: 2 }}>
+        {/* Hero: name, role, contact line, short summary */}
         <Box
           sx={{
             maxWidth: 720,
@@ -29,6 +35,7 @@ export function Home() {
               from: { opacity: 0, transform: 'translateY(16px)' },
               to: { opacity: 1, transform: 'translateY(0)' },
             },
+            // Respect OS “reduce motion” setting
             '@media (prefers-reduced-motion: reduce)': {
               animation: 'none',
             },
@@ -69,6 +76,7 @@ export function Home() {
           </Typography>
         </Box>
 
+        {/* Section ids match Nav hash links (#experience, #projects, …) */}
         <Section id="experience" eyebrow="Career" title="Experience">
           <Stack spacing={4}>
             {experience.map((job) => (
@@ -112,6 +120,7 @@ export function Home() {
           </Stack>
         </Section>
 
+        {/* Tiles link to /:slug (or /puppies for the live demo) */}
         <Section id="projects" eyebrow="Selected work" title="Projects">
           <Box
             sx={{
