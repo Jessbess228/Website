@@ -32,6 +32,7 @@ const project = getProjectBySlug('puppies')
 
 const DEFAULT_LIFESPAN: [number, number] = [0, 20]
 
+// Placeholder filter lists so the UI can render before the filters request returns
 const emptyFilters: PuppyFilters = {
   sizes: [],
   breed_groups: [],
@@ -40,9 +41,17 @@ const emptyFilters: PuppyFilters = {
 }
 
 export function PuppiesPage() {
+  // Accessibility: skip Fade when the user prefers reduced motion
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+
+  // ----- React state -----
+
+  // default so that the page can render before /api/puppies/filters/ returns
   const [filters, setFilters] = useState<PuppyFilters>(emptyFilters)
+
+  // slider position (state is updated when dragged)
   const [lifespanRange, setLifespanRange] = useState<[number, number]>(DEFAULT_LIFESPAN)
+  // search parameters (state is updated when user types)
   const [params, setParams] = useState<PuppySearchParams>({
     q: '',
     name: '',
@@ -51,19 +60,28 @@ export function PuppiesPage() {
     min_lifespan: DEFAULT_LIFESPAN[0],
     max_lifespan: DEFAULT_LIFESPAN[1],
   })
+  // Used in useEffect, this data is sent to the API
   const [debounced, setDebounced] = useState(params)
   const [retryKey, setRetryKey] = useState(0)
   const [puppies, setPuppies] = useState<Puppy[]>([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  // Separate error to handle filter failure
   const [filtersError, setFiltersError] = useState<string | null>(null)
 
+  // ----- Effects -----
+
+  /**
+   * Delayed params input → debounced.
+   * effect: one API call after typing pauses, not one per keystroke.
+   */
   useEffect(() => {
-    const handle = window.setTimeout(() => setDebounced(params), 300)
-    return () => window.clearTimeout(handle)
+    const pendingTimeout = window.setTimeout(() => setDebounced(params), 300)
+    return () => window.clearTimeout(pendingTimeout)
   }, [params])
 
+  /* on mount, this effect runs fetchPuppyFilters()to get the filter options */
   useEffect(() => {
     const controller = new AbortController()
     setFiltersError(null)
@@ -72,6 +90,7 @@ export function PuppiesPage() {
         setFilters(next)
         const range: [number, number] = [next.lifespan_min, next.lifespan_max]
         setLifespanRange(range)
+        // Seed search params with the real lifespan extent from the DB
         setParams((prev) => ({
           ...prev,
           min_lifespan: range[0],
@@ -79,6 +98,7 @@ export function PuppiesPage() {
         }))
       })
       .catch((err: unknown) => {
+        // Ignore aborts — expected on navigation away
         if ((err as Error).name === 'AbortError') return
         console.error(err)
         setFiltersError(err instanceof Error ? err.message : 'Could not load puppy filters.')
@@ -86,6 +106,10 @@ export function PuppiesPage() {
     return () => controller.abort()
   }, [])
 
+  /**
+   * Fetch the breed list whenever debounced filters or retryKey change.
+   * AbortController cancels the previous request when dependencies change.
+   */
   useEffect(() => {
     const controller = new AbortController()
     setLoading(true)
@@ -103,6 +127,7 @@ export function PuppiesPage() {
         setCount(0)
       })
       .finally(() => {
+        // Only clear spinner if THIS request is still the active one
         if (!controller.signal.aborted) {
           setLoading(false)
         }
@@ -111,15 +136,20 @@ export function PuppiesPage() {
     return () => controller.abort()
   }, [debounced, retryKey])
 
+  // ----- Event helpers -----
+
+  /** Patch one string filter field on `params`. */
   const update = (key: keyof PuppySearchParams, value: string) => {
     setParams((prev) => ({ ...prev, [key]: value }))
   }
 
+  /** Re-run search immediately (bypass waiting for debounce). */
   const retrySearch = () => {
     setDebounced(params)
     setRetryKey((key) => key + 1)
   }
 
+  /** Reset all filters to empty / full lifespan range from the API. */
   const clearFilters = () => {
     const range: [number, number] = [filters.lifespan_min, filters.lifespan_max]
     setLifespanRange(range)
@@ -133,6 +163,8 @@ export function PuppiesPage() {
     })
   }
 
+  // ----- Render -----
+
   return (
     <Fade in timeout={reduceMotion ? 0 : 500}>
       <Box component="main">
@@ -140,6 +172,7 @@ export function PuppiesPage() {
           <Box sx={{ maxWidth: 880, mx: 'auto' }}>
             <BackHome />
 
+            {/* ---- Page intro (from projects.ts) ---- */}
             <Typography
               variant="overline"
               color="primary"
@@ -156,6 +189,7 @@ export function PuppiesPage() {
                 mb: 2,
               }}
             >
+              {/* Fallback title if projects.ts entry is missing */}
               {project?.title ?? 'Puppy Data Collection'}
             </Typography>
 
@@ -167,11 +201,13 @@ export function PuppiesPage() {
               ))}
             </Stack>
 
+            {/* ---- Search / filter controls ---- */}
             <Typography variant="h2" component="h2" sx={{ mb: 2 }}>
               Browse the collection
             </Typography>
 
             <Stack spacing={2} sx={{ mb: 3 }}>
+              {/* Free-text `q` — server-side search */}
               <TextField
                 label="Search"
                 placeholder="Breed or group"
@@ -181,6 +217,7 @@ export function PuppiesPage() {
                 size="small"
               />
 
+              {/* 2×2 grid of structured filters on sm+ screens */}
               <Box
                 sx={{
                   display: 'grid',
@@ -198,6 +235,8 @@ export function PuppiesPage() {
                   onChange={(event) => update('name', event.target.value)}
                   size="small"
                 />
+
+                {/* Size dropdown — options from filters.sizes */}
                 <FormControl size="small">
                   <InputLabel id="size-label">Size</InputLabel>
                   <Select
@@ -214,6 +253,8 @@ export function PuppiesPage() {
                     ))}
                   </Select>
                 </FormControl>
+
+                {/* Breed group dropdown — options from filters.breed_groups */}
                 <FormControl size="small">
                   <InputLabel id="group-label">Breed group</InputLabel>
                   <Select
@@ -230,6 +271,12 @@ export function PuppiesPage() {
                     ))}
                   </Select>
                 </FormControl>
+
+                {/*
+                  Life-span range slider.
+                  Styled like an outlined input so it matches TextField / Select.
+                  onChange = drag preview; onChangeCommitted = actually search.
+                */}
                 <Box
                   sx={{
                     px: 1.5,
@@ -262,7 +309,7 @@ export function PuppiesPage() {
                     max={filters.lifespan_max}
                     step={1}
                     valueLabelDisplay="auto"
-                    disableSwap
+                    disableSwap // keep min handle left of max handle
                     onChange={(_event, value) => {
                       const range = value as [number, number]
                       setLifespanRange(range)
@@ -287,6 +334,7 @@ export function PuppiesPage() {
                 </Box>
               </Box>
 
+              {/* Actions + live result count */}
               <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
                 <Button onClick={clearFilters} variant="outlined" size="small">
                   Clear filters
@@ -304,6 +352,8 @@ export function PuppiesPage() {
                 </Typography>
               </Stack>
             </Stack>
+
+            {/* ---- Status / empty / loading ---- */}
 
             {filtersError && (
               <Typography color="warning.main" sx={{ mb: 2 }}>
@@ -328,6 +378,7 @@ export function PuppiesPage() {
               </Box>
             )}
 
+            {/* Successful response but zero matches */}
             {!loading && !error && puppies.length === 0 && (
               <Typography color="text.secondary" sx={{ py: 4 }}>
                 No dogs match these filters yet. The API refreshes from The Dog API on
@@ -335,6 +386,7 @@ export function PuppiesPage() {
               </Typography>
             )}
 
+            {/* ---- Result cards ---- */}
             <Box
               sx={{
                 display: 'grid',
@@ -345,9 +397,11 @@ export function PuppiesPage() {
                 gap: 2.5,
               }}
             >
+              {/* Hide cards while loading so we don't flash stale results under the spinner */}
               {!loading &&
                 puppies.map((puppy) => (
                   <Card key={puppy.id} sx={{ overflow: 'hidden' }}>
+                    {/* Photo, or a placeholder block when the API sent "n/a" */}
                     {puppy.first_photo_url && puppy.first_photo_url !== 'n/a' ? (
                       <CardMedia
                         component="img"
@@ -373,6 +427,7 @@ export function PuppiesPage() {
                       <Typography variant="h3" component="h3" sx={{ mb: 1 }}>
                         {puppy.name}
                       </Typography>
+                      {/* Skip chips when the backend used the "n/a" sentinel */}
                       <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1} sx={{ mb: 1.5 }}>
                         {puppy.size !== 'n/a' && (
                           <Chip label={puppy.size} size="small" color="secondary" />

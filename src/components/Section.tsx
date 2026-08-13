@@ -17,6 +17,7 @@ export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
       id={id}
       sx={{
         py: { xs: 5, md: 7 },
+        // When Nav is sticky, this keeps the heading visible under it
         scrollMarginTop: 80,
       }}
     >
@@ -42,6 +43,7 @@ export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
         >
           {title}
         </Typography>
+        {/* Caller then supplies the section body */}
         {children}
       </Box>
     </Box>

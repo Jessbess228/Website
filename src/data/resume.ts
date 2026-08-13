@@ -1,3 +1,8 @@
+/**
+ * data/resume.ts — static resume.
+ *
+ * Edit this file to update contact info, experience, education, and skills
+ */
 export const contact = {
   name: 'Jessica Berry',
   email: 'jessicaberrydev@gmail.com',

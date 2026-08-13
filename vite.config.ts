@@ -5,8 +5,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      // Match: /api, /api/puppies/, /api/puppies/filters/, …
       '/api': {
+        // Django runserver (see puppy_data-collection repo)
         target: 'http://127.0.0.1:8080',
+        // Rewrite the Host header so Django sees a normal local request
         changeOrigin: true,
       },
     },

@@ -18,6 +18,8 @@ export function Nav() {
   const onHome = pathname === '/'
 
   return (
+    // position="sticky" keeps the bar visible while scrolling
+    // Theme styles (blur + cream translucent bg) come from theme.ts → MuiAppBar
     <AppBar position="sticky">
       <Toolbar
         sx={{
@@ -56,6 +58,7 @@ export function Nav() {
             justifyContent: 'flex-end',
           }}
         >
+          {/* Section anchors — hidden on xs so the bar stays uncluttered on phones */}
           {onHome &&
             homeLinks.map((link) => (
               <Link
@@ -72,6 +75,8 @@ export function Nav() {
                 {link.label}
               </Link>
             ))}
+
+          {/* Opens the user's mail client — not a React Router route */}
           <Button
             component="a"
             href={`mailto:${contact.email}`}

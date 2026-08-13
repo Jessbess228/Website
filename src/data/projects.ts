@@ -1,11 +1,14 @@
 export type Project = {
+  /** URL path segment and React Router key */
   slug: string
   title: string
   summary: string
+  /** Tech chips shown on the tile / project header */
   stack: string[]
   body: string[]
 }
 
+/** Ordered list shown on the home Projects section. */
 export const projects: Project[] = [
   {
     slug: 'puppies',
@@ -20,6 +23,7 @@ export const projects: Project[] = [
   },
 ]
 
+/** Find a project by URL slug, or undefined if the slug is unknown. */
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug)
 }

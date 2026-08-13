@@ -10,6 +10,10 @@ import type { Project } from '../data/projects'
 
 type ProjectTileProps = {
   project: Project
+  /**
+   * Position in the grid (0-based).
+   * Used only to stagger the entrance animation so tiles don't all pop in together.
+   */
   index?: number
 }
 
@@ -17,17 +21,20 @@ export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
   return (
     <Card
       sx={{
-        height: '100%',
+        height: '100%', // stretch to match tallest tile in the grid row
         animation: 'tileIn 0.6s ease both',
+        // Later tiles wait a bit longer → cascade effect
         animationDelay: `${0.15 + index * 0.08}s`,
         '@keyframes tileIn': {
           from: { opacity: 0, transform: 'translateY(12px)' },
           to: { opacity: 1, transform: 'translateY(0)' },
         },
+        // Subtle lift + border on hover
         '&:hover': {
           borderColor: 'primary.main',
           transform: 'translateY(-2px)',
         },
+        // Respect prefers-reduced-motion
         '@media (prefers-reduced-motion: reduce)': {
           animation: 'none',
           '&:hover': {
@@ -36,6 +43,7 @@ export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
         },
       }}
     >
+      {/* Whole card is one big link */}
       <CardActionArea
         component={RouterLink}
         to={`/${project.slug}`}
@@ -43,6 +51,7 @@ export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
       >
         <CardContent sx={{ p: 3 }}>
           <Stack spacing={1.5}>
+            {/* Decorative accent bar */}
             <Box
               sx={{
                 width: 36,
@@ -57,6 +66,7 @@ export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
             <Typography variant="body2" color="text.secondary">
               {project.summary}
             </Typography>
+            {/* Show at most 4 stack chips so the tile stays compact */}
             <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1} sx={{ pt: 0.5 }}>
               {project.stack.slice(0, 4).map((tech) => (
                 <Chip key={tech} label={tech} size="small" variant="outlined" />

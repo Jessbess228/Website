@@ -56,6 +56,7 @@ export function Home() {
             {contact.role}
           </Typography>
 
+          {/* Email (mailto) · location */}
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             <Link href={`mailto:${contact.email}`} color="inherit">
               {contact.email}
@@ -72,7 +73,9 @@ export function Home() {
         <Section id="experience" eyebrow="Career" title="Experience">
           <Stack spacing={4}>
             {experience.map((job) => (
+              // Composite key in case titles repeat across companies
               <Box key={`${job.company}-${job.title}`}>
+                {/* Title/company on the left, dates on the right (stacks on mobile) */}
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
                   justifyContent="space-between"
@@ -94,6 +97,7 @@ export function Home() {
                     {job.dates}
                   </Typography>
                 </Stack>
+                {/* Bullet list  */}
                 <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
                   {job.bullets.map((bullet) => (
                     <Typography

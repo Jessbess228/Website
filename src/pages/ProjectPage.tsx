@@ -5,6 +5,7 @@ import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+// Detects OS / browser “Reduce motion” preference
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { BackHome } from '../components/BackHome'
@@ -14,6 +15,8 @@ import { getProjectBySlug } from '../data/projects'
 export function ProjectPage() {
   const { slug } = useParams<{ slug: string }>()
   const project = slug ? getProjectBySlug(slug) : undefined
+
+  // If true, skip the Fade animation (accessibility)
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
   if (!project) {
@@ -25,6 +28,7 @@ export function ProjectPage() {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           That project does not exist yet.
         </Typography>
+        {/* navigate back to home page */}
         <Button component={RouterLink} to="/" variant="contained">
           Back home
         </Button>
@@ -39,6 +43,7 @@ export function ProjectPage() {
           <Box sx={{ maxWidth: 720, mx: 'auto' }}>
             <BackHome />
 
+            {/* Small label above the title */}
             <Typography
               variant="overline"
               color="primary"
@@ -62,6 +67,10 @@ export function ProjectPage() {
               {project.summary}
             </Typography>
 
+            {/*
+              Tech stack as chips.
+              flexWrap + useFlexGap = chips wrap cleanly on narrow screens.
+            */}
             <Stack
               direction="row"
               flexWrap="wrap"
