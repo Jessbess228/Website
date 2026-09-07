@@ -21,6 +21,17 @@ export const projects: Project[] = [
       'A background job re-queries the Dog API on a code-configured interval so the collection grows over time instead of being wiped each run.',
     ],
   },
+  {
+    slug: 'sync-consulting',
+    title: 'Sync Consulting',
+    summary:
+      'Marketing site with a visual page builder — edit layout and look live from Admin.',
+    stack: ['React', 'Vite', 'Puck'],
+    body: [
+      'Sync Consulting is a standalone Vite + React marketing site with a full Puck visual layout manager.',
+      'Open Admin on the embedded site to drag blocks, edit copy and styling, then save — the public page re-renders from the same JSON layout (persisted in localStorage).',
+    ],
+  },
 ]
 
 /** Find a project by URL slug, or undefined if the slug is unknown. */

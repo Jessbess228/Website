@@ -48,6 +48,20 @@ python manage.py migrate
 python manage.py runserver 8080
 ```
 
+### Sync Consulting (required for `/sync-consulting`)
+
+In another terminal, run the sibling app (Vite proxies `/sync-app` → `:5174`):
+
+```bash
+cd ../Sync-Consulting
+npm install
+npm run dev
+```
+
+Then open `/sync-consulting` on the portfolio. The live site and Admin page builder load in an iframe from `/sync-app/`.
+
+For production, serve Sync Consulting `dist/` under `/sync-app/` via Caddy (same origin), similar to the `/api` proxy for puppies.
+
 ---
 
 ## Deploy on Amazon EC2 (Amazon Linux)

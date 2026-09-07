@@ -3,6 +3,7 @@ import { Nav } from './components/Nav'
 import { Home } from './pages/Home'
 import { ProjectPage } from './pages/ProjectPage'
 import { PuppiesPage } from './pages/PuppiesPage'
+import { SyncConsultingPage } from './pages/SyncConsultingPage'
 
 export default function App() {
   return (
@@ -26,6 +27,12 @@ export default function App() {
           (Vite proxies in dev; Caddy proxies in production).
         */}
         <Route path="/puppies" element={<PuppiesPage />} />
+
+        {/*
+          Sync Consulting marketing site + visual page builder.
+          Iframes /sync-app/ (Vite proxies to :5174 in dev; Caddy in production).
+        */}
+        <Route path="/sync-consulting" element={<SyncConsultingPage />} />
 
         {/*
           Generic project write-up.
