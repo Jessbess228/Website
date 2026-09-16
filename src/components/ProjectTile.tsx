@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
 import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -49,6 +50,17 @@ export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
         to={`/${project.slug}`}
         sx={{ height: '100%', alignItems: 'stretch' }}
       >
+        {/* Show thumbnail when provided */}
+        {project.thumbnail ? (
+          <CardMedia
+            component="img"
+            height="160"
+            image={project.thumbnail}
+            alt={project.thumbnailAlt ?? project.title}
+            sx={{ objectFit: 'cover' }}
+          />
+        ) : null}
+
         <CardContent sx={{ p: 3 }}>
           <Stack spacing={1.5}>
             {/* Decorative accent bar */}

@@ -29,10 +29,10 @@ export default function App() {
         <Route path="/puppies" element={<PuppiesPage />} />
 
         {/*
-          Sync Consulting marketing site + visual page builder.
+          Visual page builder for Client.
           Iframes /sync-app/ (Vite proxies to :5174 in dev; Caddy in production).
         */}
-        <Route path="/sync-consulting" element={<SyncConsultingPage />} />
+        <Route path="/sync" element={<SyncConsultingPage />} />
 
         {/*
           Generic project write-up.
