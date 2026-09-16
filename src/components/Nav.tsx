@@ -1,91 +1,67 @@
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Toolbar from '@mui/material/Toolbar'
-import Typography from '@mui/material/Typography'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { contact } from '../data/resume'
-
-const homeLinks = [
-  { label: 'Experience', href: '#experience' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Skills', href: '#skills' },
-]
+import { design as d, weight } from '../designTokens'
 
 export function Nav() {
   const { pathname } = useLocation()
   const onHome = pathname === '/'
 
   return (
-    // position="sticky" keeps the bar visible while scrolling
-    // Theme styles (blur + cream translucent bg) come from theme.ts → MuiAppBar
-    <AppBar position="sticky">
+    // position="sticky" keeps the bar visible while scrolling.
+    // Styling is set here rather than in theme.ts so the bar matches the
+    // Figma home page (flat off-white) instead of the older cream theme.
+    <AppBar
+      position="sticky"
+      sx={{
+        bgcolor: d.offWhite,
+        borderBottom: `1px solid ${d.panel}`,
+      }}
+    >
       <Toolbar
+        disableGutters
         sx={{
-          maxWidth: 960,
-          width: '100%',
-          mx: 'auto',
-          gap: 2,
+          minHeight: 'unset',
           justifyContent: 'space-between',
-          py: 0.5,
+          px: { xs: 3, md: '48px' },
+          py: '16px',
         }}
       >
-        <Typography
+        <Box
           component={RouterLink}
           to="/"
-          variant="subtitle1"
-          color="text.primary"
-          sx={{
-            textDecoration: 'none',
-            fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontWeight: 600,
-            lineHeight: 1.2,
-            '&:hover': { color: 'primary.main' },
-          }}
+          aria-label="Home"
+          sx={{ display: 'flex', alignItems: 'center' }}
         >
-          {contact.name}
-        </Typography>
+          <Box
+            component="img"
+            src="/images/house.svg"
+            alt=""
+            sx={{ width: 20, height: 20, display: 'block' }}
+          />
+        </Box>
 
-        <Box
-          component="nav"
-          aria-label="Primary"
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: { xs: 0.5, sm: 1 },
-            flexWrap: 'wrap',
-            justifyContent: 'flex-end',
-          }}
-        >
-          {/* Section anchors — hidden on xs so the bar stays uncluttered on phones */}
-          {onHome &&
-            homeLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                color="text.secondary"
-                variant="body2"
-                sx={{
-                  px: { xs: 0.75, sm: 1 },
-                  py: 0.5,
-                  display: { xs: 'none', sm: 'inline' },
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-          {/* Opens the user's mail client — not a React Router route */}
-          <Button
-            component="a"
-            href={`mailto:${contact.email}`}
-            variant="contained"
-            size="small"
-            color="primary"
+        <Box component="nav" aria-label="Primary" sx={{ display: 'flex', alignItems: 'center' }}>
+          <Link
+            href={onHome ? '#projects' : '/#projects'}
+            underline="none"
+            sx={{
+              px: '12px',
+              py: '8px',
+              fontFamily: d.sans,
+              fontWeight: weight.bold,
+              fontSize: 12,
+              textTransform: 'uppercase',
+              color: d.sage,
+              whiteSpace: 'nowrap',
+              '&:hover': { color: d.rose },
+              '&:focus-visible': { outline: `2px solid ${d.rose}`, outlineOffset: 2 },
+            }}
           >
-            Contact
-          </Button>
+            Projects
+          </Link>
         </Box>
       </Toolbar>
     </AppBar>

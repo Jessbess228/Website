@@ -7,7 +7,7 @@ import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
 
-const project = getProjectBySlug('sync-consulting')
+const project = getProjectBySlug('sync')
 
 /** Portfolio host for the Sync Consulting app (proxied at /sync-app/). */
 export function SyncConsultingPage() {

@@ -11,7 +11,6 @@ import { Link as RouterLink, useParams } from 'react-router-dom'
 import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
-import CardMedia from '@mui/material/CardMedia'
 
 export function ProjectPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -43,16 +42,6 @@ export function ProjectPage() {
         <Container maxWidth="md" sx={{ pt: { xs: 5, md: 8 }, pb: 2 }}>
           <Box sx={{ maxWidth: 720, mx: 'auto' }}>
             <BackHome />
-
-            {/* Hero image for project when provided */}
-            {project.thumbnail && (
-              <CardMedia
-                component="img"
-                image={project.thumbnail}
-                alt={project.thumbnailAlt ?? project.title}
-                sx={{ height: { xs: 180, md: 300 }, objectFit: 'cover', borderRadius: 1, mb: 3 }}
-              />
-            )}
 
             {/* Small label above the title */}
             <Typography

@@ -1,12 +1,7 @@
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import CardActionArea from '@mui/material/CardActionArea'
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
-import Chip from '@mui/material/Chip'
-import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { Link as RouterLink } from 'react-router-dom'
+import { design as d, weight } from '../designTokens'
 import type { Project } from '../data/projects'
 
 type ProjectTileProps = {
@@ -20,9 +15,16 @@ type ProjectTileProps = {
 
 export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
   return (
-    <Card
+    // Flat card per the Figma frame: no surface, border, or rounding — the
+    // whole tile is the link, since the design has no separate "view" cue.
+    <Box
+      component={RouterLink}
+      to={`/${project.slug}`}
       sx={{
-        height: '100%', // stretch to match tallest tile in the grid row
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        textDecoration: 'none',
         animation: 'tileIn 0.6s ease both',
         // Later tiles wait a bit longer → cascade effect
         animationDelay: `${0.15 + index * 0.08}s`,
@@ -30,70 +32,72 @@ export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
           from: { opacity: 0, transform: 'translateY(12px)' },
           to: { opacity: 1, transform: 'translateY(0)' },
         },
-        // Subtle lift + border on hover
-        '&:hover': {
-          borderColor: 'primary.main',
-          transform: 'translateY(-2px)',
-        },
-        // Respect prefers-reduced-motion
+        // Stands in for the removed CTA so the tile still reads as clickable
+        '&:hover .ProjectTile-title': { color: d.rose },
+        '&:focus-visible': { outline: `2px solid ${d.rose}`, outlineOffset: 4 },
         '@media (prefers-reduced-motion: reduce)': {
           animation: 'none',
-          '&:hover': {
-            transform: 'none',
-          },
         },
       }}
     >
-      {/* Whole card is one big link */}
-      <CardActionArea
-        component={RouterLink}
-        to={`/${project.slug}`}
-        sx={{ height: '100%', alignItems: 'stretch' }}
-      >
-        {/* Show thumbnail when provided */}
-        {project.thumbnail ? (
-          <CardMedia
-            component="img"
-            height="160"
-            image={project.thumbnail}
-            alt={project.thumbnailAlt ?? project.title}
-            sx={{ objectFit: 'cover' }}
-          />
-        ) : null}
+      <Box
+        aria-hidden
+        sx={{
+          height: 100,
+          width: '100%',
+          // Tinted band keeps the grid's rhythm above each title
+          background: `linear-gradient(135deg, ${d.sageTint}, ${d.panel})`,
+        }}
+      />
 
-        <CardContent sx={{ p: 3 }}>
-          <Stack spacing={1.5}>
-            {/* Decorative accent bar */}
-            <Box
-              sx={{
-                width: 36,
-                height: 3,
-                bgcolor: 'primary.main',
-                borderRadius: 1,
-              }}
-            />
-            <Typography variant="h3" component="h3">
-              {project.title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {project.summary}
-            </Typography>
-            {/* Show at most 4 stack chips so the tile stays compact */}
-            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1} sx={{ pt: 0.5 }}>
-              {project.stack.slice(0, 4).map((tech) => (
-                <Chip key={tech} label={tech} size="small" variant="outlined" />
-              ))}
-            </Stack>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Typography
+          className="ProjectTile-title"
+          component="h3"
+          sx={{
+            fontFamily: d.display,
+            fontWeight: weight.regular,
+            fontSize: 24,
+            color: d.ink,
+            m: 0,
+            transition: 'color 0.2s ease',
+          }}
+        >
+          {project.title}
+        </Typography>
+
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+          {project.stack.map((tech) => (
             <Typography
-              variant="body2"
-              color="primary"
-              sx={{ fontWeight: 600, pt: 0.5 }}
+              key={tech}
+              component="span"
+              sx={{
+                px: 1.5,
+                py: 0.75,
+                bgcolor: d.sageTint,
+                color: d.pillInk,
+                fontFamily: d.sans,
+                fontWeight: weight.regular,
+                fontSize: 12,
+              }}
             >
-              View project →
+              {tech}
             </Typography>
-          </Stack>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+          ))}
+        </Box>
+
+        <Typography
+          sx={{
+            fontFamily: d.sans,
+            fontWeight: weight.light,
+            fontSize: 14,
+            lineHeight: 1.5,
+            color: d.body,
+          }}
+        >
+          {project.summary}
+        </Typography>
+      </Box>
+    </Box>
   )
 }

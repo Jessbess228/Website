@@ -1,16 +1,16 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import type { ReactNode } from 'react'
+import { design as d, weight } from '../designTokens'
 
 type SectionProps = {
   id?: string
   eyebrow?: string
   title: string
   children: ReactNode
-  wide?: boolean
 }
 
-export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
+export function Section({ id, eyebrow, title, children }: SectionProps) {
   return (
     <Box
       component="section"
@@ -21,24 +21,32 @@ export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
         scrollMarginTop: 80,
       }}
     >
-      <Box sx={{ maxWidth: wide ? 880 : 720, mx: 'auto' }}>
+      {/* Wide enough for the two-column project grid to match the Figma proportions */}
+      <Box sx={{ maxWidth: 1080, mx: 'auto' }}>
         {eyebrow && (
           <Typography
-            variant="overline"
-            color="primary"
-            sx={{ display: 'block', mb: 1 }}
+            sx={{
+              display: 'block',
+              mb: 1,
+              fontFamily: d.sans,
+              fontWeight: weight.bold,
+              fontSize: 11,
+              textTransform: 'uppercase',
+              color: d.rose,
+            }}
           >
             {eyebrow}
           </Typography>
         )}
+        {/* Matches the "Resume" panel heading — no rule underneath */}
         <Typography
-          variant="h2"
           component="h2"
           sx={{
-            mb: 3,
-            pb: 1.5,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
+            mb: 4,
+            fontFamily: d.display,
+            fontWeight: weight.regular,
+            fontSize: 32,
+            color: d.ink,
           }}
         >
           {title}

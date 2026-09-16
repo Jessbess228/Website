@@ -6,11 +6,20 @@
 export const contact = {
   name: 'Jessica Berry',
   email: 'jessicaberrydev@gmail.com',
-  location: 'Sydney, Australia',
-  role: 'IT student · Software Engineering',
+  phone: '0431283033',
+  role: 'Full Stack Developer',
+  /**
+   * Shown as pills in the hero card: `label` is the visible text, `url` is where
+   * the pill goes. Split so a long profile URL can sit behind a short label.
+   */
+  github: { label: 'github.com/jessbess228', url: 'https://github.com/jessbess228' },
+  linkedin: {
+    label: 'LinkedIn.com         ',
+    url: 'https://www.linkedin.com/in/jessica-berry-6263481b7',
+  },
 }
 
-export const summary = `Current computer science student ready to take on challenges and begin my career in Data/Software Engineering. Using problem-solving and task prioritization skills to quickly close any knowledge gaps allows me to hit the ground running in any new environment. Curiosity drives my interest in learning new skills as I aim to expand my knowledge of computer science and more.`
+export const summary = `I'm Jess — A current computer science student ready to take on challenges and begin my career in Software Engineering. \n\n By using problem-solving and task prioritisation skills I can quickly close any knowledge gaps, this allows me to hit the ground running in any new environment. \n Curiosity drives my interest in learning new skills as I aim to expand my knowledge of front and backend applications.`
 
 export type ExperienceItem = {
   title: string
@@ -48,17 +57,16 @@ export const education = {
   note: 'Graduating Oct 2026',
 }
 
-export const skills = [
-  'Java',
-  'Python',
-  'TypeScript',
-  'REST APIs',
-  'SQL',
-  'Web Sockets',
-  'Docker',
-  'Unit Testing',
-  'Git',
-  'Scripting',
-  'ETL processes',
-  'Adonis',
+export type SkillCategory = {
+  items: string[]
+}
+
+/** Grouped into categories so the resume panel can lay them out as a 2x2 grid. */
+export const skillCategories: SkillCategory[] = [
+  {
+    items: ['Java', 'Python', 'TypeScript', 'SQL', 'JavaScript', 'Rest APIs' , 'Web Sockets',],
+  },
+  {
+    items: ['Git', 'Docker', 'Scripting', 'Unit Testing', 'ETL processes', 'CI/CD pipelines'],
+  },
 ]

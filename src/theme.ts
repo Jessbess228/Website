@@ -2,6 +2,8 @@ import { createTheme } from '@mui/material/styles'
 
 const cream = '#F7F1E8'
 const ivory = '#FFFCFA'
+/* Page background from the Figma design — replaces the old cream wash. */
+const offWhite = '#FAFAFA'
 const ink = '#2A221F'
 const cocoa = '#6B4F45'
 const burgundy = '#7A1F2B'
@@ -20,7 +22,7 @@ export const theme = createTheme({
       contrastText: ink,
     },
     background: {
-      default: cream,
+      default: offWhite,
       paper: ivory,
     },
     text: {
@@ -119,11 +121,10 @@ export const theme = createTheme({
         html: {
           scrollBehavior: 'smooth',
         },
-        body: {
-          backgroundImage:
-            'radial-gradient(ellipse at top, rgba(232, 213, 207, 0.45) 0%, transparent 55%), radial-gradient(ellipse at bottom right, rgba(122, 31, 43, 0.04) 0%, transparent 45%)',
-          backgroundAttachment: 'fixed',
-        },
+        /*
+         * No page-level gradient: the cream/burgundy wash used to bleed into the
+         * redesigned home page and clash with the resume panel's flat #F0EDED.
+         */
         '@media (prefers-reduced-motion: reduce)': {
           '*, *::before, *::after': {
             animationDuration: '0.01ms !important',
@@ -139,13 +140,8 @@ export const theme = createTheme({
         elevation: 0,
         color: 'transparent',
       },
-      styleOverrides: {
-        root: {
-          backgroundColor: 'rgba(247, 241, 232, 0.85)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: `1px solid ${blush}`,
-        },
-      },
+      // Appearance lives in Nav.tsx now — it follows the Figma design tokens
+      // rather than this theme's cream palette.
     },
     MuiOutlinedInput: {
       styleOverrides: {
@@ -202,16 +198,6 @@ export const theme = createTheme({
             outline: `2px solid ${burgundy}`,
             outlineOffset: 3,
             borderRadius: 2,
-          },
-        },
-      },
-    },
-    MuiCardActionArea: {
-      styleOverrides: {
-        root: {
-          '&:focus-visible': {
-            outline: `2px solid ${burgundy}`,
-            outlineOffset: 2,
           },
         },
       },

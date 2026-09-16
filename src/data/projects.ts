@@ -5,10 +5,6 @@ export type Project = {
   summary: string
   /** Tech chips shown on the tile / project header */
   stack: string[]
-  /** Optional thumbnail path (absolute from site root) */
-  thumbnail?: string
-  /** Optional alt text for the thumbnail image */
-  thumbnailAlt?: string
   body: string[]
 }
 
@@ -31,8 +27,6 @@ export const projects: Project[] = [
     summary:
       'A website prototype for a client that has a visual page builder to allow edits on their side.',
     stack: ['React', 'Vite', 'Puck'],
-    thumbnail: '/images/sync-consulting.png',
-    thumbnailAlt: 'Website Builder thumbnail',
     body: [
       'Sync Consulting is a standalone Vite + React marketing site with a full Puck visual layout manager.',
       'Open Admin on the embedded site to drag blocks, edit copy and styling, then save — the public page re-renders from the same JSON layout (persisted in localStorage).',
