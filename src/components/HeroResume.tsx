@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { design as d, weight } from '../designTokens'
 import { contact, education, experience, skillCategories, summary } from '../data/resume'
 
@@ -122,7 +123,9 @@ const detailSx = {
   color: d.body,
 } as const
 
-type ContactPill = { label: string; href: string }
+type ContactPill =
+  | { label: string; copy: string; href?: undefined }
+  | { label: string; href: string; copy?: undefined }
 
 /**
  * Hand-cut edges so the pills read as torn paper rather than rectangles.
@@ -160,11 +163,105 @@ const summaryLines = summary
   .filter(Boolean)
 
 const contactPills: ContactPill[] = [
-  { label: contact.email, href: `mailto:${contact.email}` },
-  { label: contact.phone, href: `tel:${contact.phone}` },
+  { label: contact.email, copy: contact.email },
+  { label: contact.phone, copy: contact.phone },
   { label: contact.github.label, href: contact.github.url },
   { label: contact.linkedin.label, href: contact.linkedin.url },
 ]
+
+const pillWrapSx = {
+  display: 'inline-block',
+  textDecoration: 'none',
+  border: 0,
+  padding: 0,
+  background: 'none',
+  cursor: 'pointer',
+  font: 'inherit',
+  '&:hover .ContactPill-face': { backgroundColor: d.ink },
+  '&:focus-visible': {
+    outline: `2px solid ${d.ink}`,
+    outlineOffset: 3,
+  },
+} as const
+
+function pillFaceSx(shape: (typeof pillShapes)[number]) {
+  return {
+    display: 'block',
+    px: '20px',
+    py: '14px',
+    backgroundColor: `rgba(${d.roseRgb}, ${shape.opacity})`,
+    clipPath: shape.clipPath,
+    color: d.offWhite,
+    fontFamily: d.sans,
+    fontWeight: weight.bold,
+    fontSize: 12,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    transition: 'background-color 0.2s ease',
+  } as const
+}
+
+function ContactPills() {
+  const [copied, setCopied] = useState<string | null>(null)
+  const copiedTimer = useRef<number | undefined>(undefined)
+
+  useEffect(() => () => window.clearTimeout(copiedTimer.current), [])
+
+  const copyValue = async (value: string) => {
+    try {
+      await navigator.clipboard.writeText(value)
+    } catch {
+      // Clipboard can fail on insecure origins; the label still updates so
+      // the click is not silent, but nothing is written if this throws.
+      return
+    }
+    setCopied(value)
+    window.clearTimeout(copiedTimer.current)
+    copiedTimer.current = window.setTimeout(() => setCopied(null), 1600)
+  }
+
+  return (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+      {contactPills.map((pill, i) => {
+        const shape = pillShapes[i % pillShapes.length]
+        const justCopied = pill.copy != null && copied === pill.copy
+        const face = (
+          <Typography className="ContactPill-face" component="span" sx={pillFaceSx(shape)}>
+            {justCopied ? 'Copied' : pill.label}
+          </Typography>
+        )
+
+        if (pill.copy) {
+          return (
+            <Box
+              key={pill.label}
+              component="button"
+              type="button"
+              onClick={() => void copyValue(pill.copy)}
+              aria-label={`Copy ${pill.label}`}
+              sx={pillWrapSx}
+            >
+              {face}
+            </Box>
+          )
+        }
+
+        return (
+          <Box
+            key={pill.label}
+            component="a"
+            href={pill.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={pillWrapSx}
+          >
+            {face}
+          </Box>
+        )
+      })}
+    </Box>
+  )
+}
 
 export function HeroResume() {
   return (
@@ -266,55 +363,7 @@ export function HeroResume() {
 
           <Stack spacing={1.75}>
             <BlockLabel>Contact</BlockLabel>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-              {contactPills.map((pill, i) => {
-                const shape = pillShapes[i % pillShapes.length]
-                return (
-                  <Box
-                    key={pill.label}
-                    component="a"
-                    href={pill.href}
-                    // Only the profile links leave the site; mailto / tel should not
-                    // open a blank tab
-                    {...(pill.href.startsWith('http')
-                      ? { target: '_blank', rel: 'noopener noreferrer' }
-                      : {})}
-                    // The focus ring lives on this unclipped wrapper, because
-                    // clip-path on the face below would crop an outline away.
-                    sx={{
-                      display: 'inline-block',
-                      textDecoration: 'none',
-                      '&:hover .ContactPill-face': { backgroundColor: d.ink },
-                      '&:focus-visible': {
-                        outline: `2px solid ${d.ink}`,
-                        outlineOffset: 3,
-                      },
-                    }}
-                  >
-                    <Typography
-                      className="ContactPill-face"
-                      component="span"
-                      sx={{
-                        display: 'block',
-                        px: '20px',
-                        py: '14px',
-                        backgroundColor: `rgba(${d.roseRgb}, ${shape.opacity})`,
-                        clipPath: shape.clipPath,
-                        color: d.offWhite,
-                        fontFamily: d.sans,
-                        fontWeight: weight.bold,
-                        fontSize: 12,
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        transition: 'background-color 0.2s ease',
-                      }}
-                    >
-                      {pill.label}
-                    </Typography>
-                  </Box>
-                )
-              })}
-            </Box>
+            <ContactPills />
           </Stack>
         </Stack>
       </Box>
