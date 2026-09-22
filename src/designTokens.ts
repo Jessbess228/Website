@@ -19,6 +19,12 @@ export const design = {
   sageTint: '#D4E2D4',
   pillInk: '#3A3030',
   hairline: '#C9A0A0',
+  /** `hairline` at 40% — the border on panels, inputs and rules. */
+  hairlineSoft: 'rgba(201, 160, 160, 0.4)',
+  /** Card surface on the project pages, brighter than the page background. */
+  card: '#FFFFFF',
+  /** Sits behind a card image until (or unless) the photo loads. */
+  imagePlaceholder: '#E8E3DE',
   display: '"Playfair Display", Georgia, serif',
   sans: '"Lato", system-ui, sans-serif',
 }

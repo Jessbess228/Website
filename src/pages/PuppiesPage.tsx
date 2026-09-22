@@ -1,21 +1,14 @@
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
-import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
-import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
+import InputBase from '@mui/material/InputBase'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Slider from '@mui/material/Slider'
 import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import {
   fetchPuppies,
@@ -24,8 +17,8 @@ import {
   type PuppyFilters,
   type PuppySearchParams,
 } from '../api/puppies'
-import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
+import { design as d, weight } from '../designTokens'
 import { getProjectBySlug } from '../data/projects'
 
 const project = getProjectBySlug('puppies')
@@ -38,6 +31,158 @@ const emptyFilters: PuppyFilters = {
   breed_groups: [],
   lifespan_min: DEFAULT_LIFESPAN[0],
   lifespan_max: DEFAULT_LIFESPAN[1],
+}
+
+/** Icons exported from the Figma frame; sizes are the designed leaf dimensions. */
+const icons = {
+  search: { src: '/images/icons/search.svg', size: 18 },
+  chevron: { src: '/images/icons/chevron-down.svg', size: 14 },
+  scale: { src: '/images/icons/scale.svg', size: 14 },
+  clock: { src: '/images/icons/clock.svg', size: 14 },
+  dot: { src: '/images/icons/dot.svg', size: 6 },
+} as const
+
+function Icon({ icon }: { icon: { src: string; size: number } }) {
+  return (
+    <Box
+      component="img"
+      src={icon.src}
+      alt=""
+      aria-hidden
+      sx={{ width: icon.size, height: icon.size, display: 'block', flexShrink: 0 }}
+    />
+  )
+}
+
+/** Small caps label above each filter field. */
+function FieldLabel({ children }: { children: ReactNode }) {
+  return (
+    <Typography
+      component="span"
+      sx={{
+        fontFamily: d.sans,
+        fontWeight: weight.bold,
+        fontSize: 11,
+        textTransform: 'uppercase',
+        color: d.body,
+      }}
+    >
+      {children}
+    </Typography>
+  )
+}
+
+/** Shared shell for the text input and the two selects. */
+const fieldSx = {
+  bgcolor: d.offWhite,
+  border: `1px solid ${d.hairlineSoft}`,
+  borderRadius: '6px',
+  px: '14px',
+  py: '10px',
+  fontFamily: d.sans,
+  fontSize: 13,
+  color: d.ink,
+} as const
+
+const buttonSx = {
+  borderRadius: '6px',
+  px: '18px',
+  py: '10px',
+  fontFamily: d.sans,
+  fontWeight: weight.bold,
+  fontSize: 13,
+  cursor: 'pointer',
+  transition: 'background-color 0.2s ease, color 0.2s ease',
+  '&:focus-visible': { outline: `2px solid ${d.rose}`, outlineOffset: 2 },
+} as const
+
+const metaTextSx = {
+  fontFamily: d.sans,
+  fontSize: 13,
+  color: d.body,
+} as const
+
+type FilterSelectProps = {
+  label: string
+  /** Shown as the value when nothing is chosen, and as the "no filter" option. */
+  placeholder: string
+  value: string
+  options: string[]
+  onChange: (value: string) => void
+}
+
+/**
+ * Size / breed-group dropdown. The open menu is styled here too — left alone it
+ * inherits the older cream MUI theme the rest of this page has moved off.
+ */
+function FilterSelect({ label, placeholder, value, options, onChange }: FilterSelectProps) {
+  return (
+    <Stack spacing={0.75}>
+      <FieldLabel>{label}</FieldLabel>
+      <Select
+        variant="standard"
+        disableUnderline
+        displayEmpty
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        inputProps={{ 'aria-label': label }}
+        renderValue={(current) => (current ? String(current) : placeholder)}
+        IconComponent={(props) => (
+          <Box {...props} component="img" src={icons.chevron.src} alt="" aria-hidden />
+        )}
+        MenuProps={{
+          MenuListProps: { sx: { py: 0.5 } },
+          PaperProps: {
+            sx: {
+              mt: 0.5,
+              bgcolor: d.offWhite,
+              border: `1px solid ${d.hairlineSoft}`,
+              borderRadius: '6px',
+              // Keeps the highlighted row inside the rounded corners
+              overflow: 'hidden',
+              boxShadow: '0 4px 12px rgba(58, 48, 48, 0.08)',
+              '& .MuiMenuItem-root': {
+                minHeight: 'unset',
+                px: '14px',
+                py: '8px',
+                fontFamily: d.sans,
+                fontSize: 13,
+                color: d.ink,
+                '&:hover': { bgcolor: `rgba(${d.roseRgb}, 0.08)` },
+                '&.Mui-selected': {
+                  bgcolor: `rgba(${d.roseRgb}, 0.12)`,
+                  fontWeight: weight.bold,
+                  '&:hover': { bgcolor: `rgba(${d.roseRgb}, 0.16)` },
+                },
+              },
+            },
+          },
+        }}
+        sx={{
+          ...fieldSx,
+          '& .MuiSelect-select': {
+            p: 0,
+            pr: '22px !important',
+            minHeight: 'unset',
+            bgcolor: 'transparent',
+          },
+          '& .MuiSelect-icon': {
+            width: icons.chevron.size,
+            height: icons.chevron.size,
+            right: '14px',
+            top: 'calc(50% - 7px)',
+          },
+        }}
+      >
+        <MenuItem value="">{placeholder}</MenuItem>
+        {options.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </Stack>
+  )
 }
 
 export function PuppiesPage() {
@@ -167,149 +312,201 @@ export function PuppiesPage() {
 
   return (
     <Fade in timeout={reduceMotion ? 0 : 500}>
-      <Box component="main">
-        <Container maxWidth="md" sx={{ pt: { xs: 5, md: 8 }, pb: 2 }}>
-          <Box sx={{ maxWidth: 880, mx: 'auto' }}>
-            <BackHome />
-
-            {/* ---- Page intro (from projects.ts) ---- */}
+      <Box
+        component="main"
+        sx={{
+          px: { xs: 3, sm: 5, md: '80px' },
+          pt: { xs: 4, md: '48px' },
+          pb: { xs: 6, md: '80px' },
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: 1080,
+            mx: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: { xs: 4, md: '48px' },
+          }}
+        >
+          {/* ---- Page intro (copy from projects.ts) ---- */}
+          <Stack spacing={2} sx={{ maxWidth: 800 }}>
             <Typography
-              variant="overline"
-              color="primary"
-              sx={{ display: 'block', mb: 1 }}
+              sx={{
+                fontFamily: d.sans,
+                fontWeight: weight.black,
+                fontSize: 12,
+                textTransform: 'uppercase',
+                color: d.rose,
+              }}
             >
-              Project
+              ✦ Project Showcase
             </Typography>
 
             <Typography
-              variant="h1"
               component="h1"
               sx={{
-                fontSize: { xs: '2.25rem', md: '3.25rem' },
-                mb: 2,
+                fontFamily: d.display,
+                fontWeight: weight.regular,
+                fontSize: { xs: 36, md: 48 },
+                lineHeight: 1.1,
+                color: d.ink,
+                m: 0,
               }}
             >
               {/* Fallback title if projects.ts entry is missing */}
-              {project?.title ?? 'Puppy Data Collection'}
+              {project?.title ?? 'Dog Breed Data Collection'}
             </Typography>
 
-            <Stack spacing={1.5} sx={{ mb: 4, maxWidth: 720 }}>
-              {(project?.body ?? []).map((paragraph) => (
-                <Typography key={paragraph} variant="body1" color="text.secondary">
+            {[project?.summary, ...(project?.body ?? [])]
+              .filter((paragraph): paragraph is string => Boolean(paragraph))
+              .map((paragraph) => (
+                <Typography
+                  key={paragraph}
+                  sx={{
+                    fontFamily: d.sans,
+                    fontWeight: weight.light,
+                    fontSize: 16,
+                    lineHeight: 1.6,
+                    color: d.body,
+                  }}
+                >
                   {paragraph}
                 </Typography>
               ))}
-            </Stack>
+          </Stack>
 
-            {/* ---- Search / filter controls ---- */}
-            <Typography variant="h2" component="h2" sx={{ mb: 2 }}>
-              Browse the collection
-            </Typography>
+          <Box aria-hidden sx={{ height: '1px', bgcolor: d.hairlineSoft }} />
 
-            <Stack spacing={2} sx={{ mb: 3 }}>
-              {/* Free-text `q` — server-side search */}
-              <TextField
-                label="Search"
-                placeholder="Breed or group"
+          <Typography
+            component="h2"
+            sx={{
+              fontFamily: d.display,
+              fontWeight: weight.regular,
+              fontSize: 32,
+              color: d.ink,
+              m: 0,
+            }}
+          >
+            Browse the collection
+          </Typography>
+
+          {/* ---- Search / filter controls ---- */}
+          <Box
+            sx={{
+              bgcolor: d.panel,
+              border: `1px solid ${d.hairlineSoft}`,
+              borderRadius: '12px',
+              p: { xs: 2.5, md: '28px' },
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+            }}
+          >
+            {/* Free-text `q` — server-side search */}
+            <Box
+              sx={{
+                ...fieldSx,
+                borderRadius: '8px',
+                px: '16px',
+                py: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                '&:focus-within': { borderColor: d.rose },
+              }}
+            >
+              <Icon icon={icons.search} />
+              <InputBase
                 value={params.q ?? ''}
                 onChange={(event) => update('q', event.target.value)}
-                fullWidth
-                size="small"
-              />
-
-              {/* 2×2 grid of structured filters on sm+ screens */}
-              <Box
+                placeholder="Search by breed name, alternative names, traits or country of origin..."
+                inputProps={{ 'aria-label': 'Search breeds' }}
                 sx={{
-                  display: 'grid',
-                  gridTemplateColumns: {
-                    xs: '1fr',
-                    sm: '1fr 1fr',
-                  },
-                  gap: 2,
-                  alignItems: 'end',
+                  flex: 1,
+                  fontFamily: d.sans,
+                  fontSize: 14,
+                  color: d.ink,
+                  '& input': { p: 0 },
+                  '& input::placeholder': { color: d.body, opacity: 1 },
                 }}
-              >
-                <TextField
-                  label="Breed name"
+              />
+            </Box>
+
+            {/* Four filter fields — one row on desktop, stacked on phones */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  md: 'repeat(4, minmax(0, 1fr))',
+                },
+                gap: 2,
+              }}
+            >
+              <Stack spacing={0.75}>
+                <FieldLabel>Breed name</FieldLabel>
+                <InputBase
                   value={params.name ?? ''}
                   onChange={(event) => update('name', event.target.value)}
-                  size="small"
-                />
-
-                {/* Size dropdown — options from filters.sizes */}
-                <FormControl size="small">
-                  <InputLabel id="size-label">Size</InputLabel>
-                  <Select
-                    labelId="size-label"
-                    label="Size"
-                    value={params.size ?? ''}
-                    onChange={(event) => update('size', event.target.value)}
-                  >
-                    <MenuItem value="">Any</MenuItem>
-                    {filters.sizes.map((size) => (
-                      <MenuItem key={size} value={size}>
-                        {size}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Breed group dropdown — options from filters.breed_groups */}
-                <FormControl size="small">
-                  <InputLabel id="group-label">Breed group</InputLabel>
-                  <Select
-                    labelId="group-label"
-                    label="Breed group"
-                    value={params.breed_group ?? ''}
-                    onChange={(event) => update('breed_group', event.target.value)}
-                  >
-                    <MenuItem value="">Any</MenuItem>
-                    {filters.breed_groups.map((group) => (
-                      <MenuItem key={group} value={group}>
-                        {group}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/*
-                  Life-span range slider.
-                  Styled like an outlined input so it matches TextField / Select.
-                  onChange = drag preview; onChangeCommitted = actually search.
-                */}
-                <Box
+                  placeholder="e.g. Retriever"
+                  inputProps={{ 'aria-label': 'Breed name' }}
                   sx={{
-                    px: 1.5,
-                    pt: 0.75,
-                    pb: 0.25,
-                    minHeight: 40,
-                    borderRadius: 1,
-                    border: '1px solid',
-                    borderColor: 'grey.500',
-                    bgcolor: 'background.default',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    '&:hover': {
-                      borderColor: 'text.primary',
-                    },
+                    ...fieldSx,
+                    '& input': { p: 0 },
+                    '& input::placeholder': { color: d.ink, opacity: 0.55 },
+                    '&:focus-within': { borderColor: d.rose },
                   }}
-                >
+                />
+              </Stack>
+
+              {/* Size dropdown — options from filters.sizes */}
+              <FilterSelect
+                label="Size"
+                placeholder="Any Size"
+                value={params.size ?? ''}
+                options={filters.sizes}
+                onChange={(value) => update('size', value)}
+              />
+
+              {/* Breed group dropdown — options from filters.breed_groups */}
+              <FilterSelect
+                label="Breed group"
+                placeholder="All Groups"
+                value={params.breed_group ?? ''}
+                options={filters.breed_groups}
+                onChange={(value) => update('breed_group', value)}
+              />
+
+              {/*
+                Life-span range slider.
+                onChange = drag preview; onChangeCommitted = actually search.
+              */}
+              <Stack spacing={0.75}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+                  <FieldLabel>Lifespan</FieldLabel>
                   <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ lineHeight: 1.2, mb: 0.25 }}
+                    component="span"
+                    sx={{
+                      fontFamily: d.sans,
+                      fontWeight: weight.bold,
+                      fontSize: 11,
+                      color: d.rose,
+                      whiteSpace: 'nowrap',
+                    }}
                   >
-                    Life span (years): {lifespanRange[0]} – {lifespanRange[1]}
+                    {lifespanRange[0]} – {lifespanRange[1]} Years
                   </Typography>
+                </Box>
+                <Box sx={{ height: 36, display: 'flex', alignItems: 'center', px: '8px' }}>
                   <Slider
-                    size="small"
                     value={lifespanRange}
                     min={filters.lifespan_min}
                     max={filters.lifespan_max}
                     step={1}
-                    valueLabelDisplay="auto"
                     disableSwap // keep min handle left of max handle
+                    getAriaLabel={(index) => (index === 0 ? 'Minimum lifespan' : 'Maximum lifespan')}
                     onChange={(_event, value) => {
                       const range = value as [number, number]
                       setLifespanRange(range)
@@ -323,140 +520,272 @@ export function PuppiesPage() {
                       }))
                     }}
                     sx={{
-                      color: 'primary.main',
-                      mx: 0.5,
-                      py: 0.5,
-                      '& .MuiSlider-markLabel': {
-                        display: 'none',
+                      color: d.rose,
+                      height: 4,
+                      p: 0,
+                      '& .MuiSlider-rail': {
+                        height: 4,
+                        borderRadius: '999px',
+                        bgcolor: d.hairlineSoft,
+                        opacity: 1,
+                      },
+                      '& .MuiSlider-track': { height: 4, borderRadius: '999px', border: 'none' },
+                      '& .MuiSlider-thumb': {
+                        width: 16,
+                        height: 16,
+                        bgcolor: d.card,
+                        border: `2px solid ${d.rose}`,
+                        '&:hover, &.Mui-focusVisible': {
+                          boxShadow: `0 0 0 6px rgba(${d.roseRgb}, 0.16)`,
+                        },
                       },
                     }}
                   />
                 </Box>
-              </Box>
+              </Stack>
+            </Box>
 
-              {/* Actions + live result count */}
-              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap" useFlexGap>
-                <Button onClick={clearFilters} variant="outlined" size="small">
+            {/* Actions + live result count */}
+            <Box
+              sx={{
+                pt: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 2,
+              }}
+            >
+              <Box sx={{ display: 'flex', gap: '12px' }}>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={clearFilters}
+                  sx={{
+                    ...buttonSx,
+                    bgcolor: 'transparent',
+                    border: `1px solid ${d.rose}`,
+                    color: d.rose,
+                    '&:hover': { bgcolor: `rgba(${d.roseRgb}, 0.08)` },
+                  }}
+                >
                   Clear filters
-                </Button>
-                <Button
+                </Box>
+                <Box
+                  component="button"
+                  type="button"
                   onClick={retrySearch}
-                  variant="contained"
-                  size="small"
                   disabled={loading}
+                  sx={{
+                    ...buttonSx,
+                    bgcolor: d.rose,
+                    border: `1px solid ${d.rose}`,
+                    color: d.offWhite,
+                    '&:hover': { bgcolor: d.ink, borderColor: d.ink },
+                    '&:disabled': { opacity: 0.6, cursor: 'default' },
+                  }}
                 >
                   Retry search
-                </Button>
-                <Typography variant="body2" color="text.secondary">
-                  {loading ? 'Loading…' : `${count} result${count === 1 ? '' : 's'}`}
-                </Typography>
-              </Stack>
-            </Stack>
-
-            {/* ---- Status / empty / loading ---- */}
-
-            {filtersError && (
-              <Typography color="warning.main" sx={{ mb: 2 }}>
-                {filtersError}
-              </Typography>
-            )}
-
-            {error && (
-              <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ mb: 3 }}>
-                <Typography color="error" sx={{ flex: 1 }}>
-                  {error}
-                </Typography>
-                <Button onClick={retrySearch} variant="outlined" size="small" color="primary">
-                  Retry
-                </Button>
-              </Stack>
-            )}
-
-            {loading && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-                <CircularProgress color="primary" />
+                </Box>
               </Box>
-            )}
 
-            {/* Successful response but zero matches */}
-            {!loading && !error && puppies.length === 0 && (
-              <Typography color="text.secondary" sx={{ py: 4 }}>
-                No dogs match these filters yet. The API refreshes from The Dog API on
-                an interval, so try again shortly or clear filters.
-              </Typography>
-            )}
+              <Box
+                sx={{
+                  bgcolor: d.offWhite,
+                  borderRadius: '20px',
+                  px: '12px',
+                  py: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <Icon icon={icons.dot} />
+                <Typography
+                  component="span"
+                  sx={{
+                    fontFamily: d.sans,
+                    fontWeight: weight.bold,
+                    fontSize: 12,
+                    textTransform: 'uppercase',
+                    color: d.sage,
+                  }}
+                >
+                  {loading
+                    ? 'Searching…'
+                    : `${count} breed${count === 1 ? '' : 's'} matching filters`}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
 
-            {/* ---- Result cards ---- */}
+          {/* ---- Status / empty / loading ---- */}
+
+          {filtersError && (
+            <Typography sx={{ ...metaTextSx, color: d.rose }}>{filtersError}</Typography>
+          )}
+
+          {error && (
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+              <Typography sx={{ ...metaTextSx, flex: 1, color: d.rose }}>{error}</Typography>
+              <Box
+                component="button"
+                type="button"
+                onClick={retrySearch}
+                sx={{
+                  ...buttonSx,
+                  bgcolor: 'transparent',
+                  border: `1px solid ${d.rose}`,
+                  color: d.rose,
+                  '&:hover': { bgcolor: `rgba(${d.roseRgb}, 0.08)` },
+                }}
+              >
+                Retry
+              </Box>
+            </Box>
+          )}
+
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+              <CircularProgress sx={{ color: d.rose }} />
+            </Box>
+          )}
+
+          {/* Successful response but zero matches */}
+          {!loading && !error && puppies.length === 0 && (
+            <Typography sx={metaTextSx}>
+              No dogs match these filters yet. The API refreshes from The Dog API on an
+              interval, so try again shortly or clear filters.
+            </Typography>
+          )}
+
+          {/* ---- Result cards ---- */}
+          {!loading && puppies.length > 0 && (
             <Box
               sx={{
                 display: 'grid',
                 gridTemplateColumns: {
                   xs: '1fr',
-                  sm: '1fr 1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  md: 'repeat(3, minmax(0, 1fr))',
                 },
-                gap: 2.5,
+                gap: 5,
               }}
             >
-              {/* Hide cards while loading so we don't flash stale results under the spinner */}
-              {!loading &&
-                puppies.map((puppy) => (
-                  <Card key={puppy.id} sx={{ overflow: 'hidden' }}>
-                    {/* Photo, or a placeholder block when the API sent "n/a" */}
-                    {puppy.first_photo_url && puppy.first_photo_url !== 'n/a' ? (
-                      <CardMedia
-                        component="img"
-                        height="200"
-                        image={puppy.first_photo_url}
-                        alt={puppy.name}
-                        sx={{ objectFit: 'cover' }}
-                      />
-                    ) : (
+              {puppies.map((puppy) => (
+                <Box
+                  key={puppy.id}
+                  sx={{
+                    bgcolor: d.card,
+                    border: `1px solid ${d.panel}`,
+                    borderRadius: '12px',
+                    p: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
+                    boxShadow: '0 4px 6px rgba(58, 48, 48, 0.04)',
+                  }}
+                >
+                  {/* The tinted block stands in when the API sent "n/a" for the photo */}
+                  <Box
+                    sx={{
+                      aspectRatio: '1 / 1',
+                      width: '100%',
+                      borderRadius: '8px',
+                      bgcolor: d.imagePlaceholder,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {puppy.first_photo_url && puppy.first_photo_url !== 'n/a' && (
                       <Box
+                        component="img"
+                        src={puppy.first_photo_url}
+                        alt={puppy.name}
+                        loading="lazy"
                         sx={{
-                          height: 200,
-                          bgcolor: 'secondary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: 'block',
                         }}
-                      >
-                        <Typography color="text.secondary">No photo</Typography>
+                      />
+                    )}
+                  </Box>
+
+                  <Stack spacing={1.5}>
+                    <Typography
+                      component="h3"
+                      sx={{
+                        fontFamily: d.display,
+                        fontWeight: weight.regular,
+                        fontSize: 22,
+                        color: d.ink,
+                        m: 0,
+                      }}
+                    >
+                      {puppy.name}
+                    </Typography>
+
+                    {/* Skip the pill when the backend used the "n/a" sentinel */}
+                    {puppy.breed_group !== 'n/a' && (
+                      <Box>
+                        <Typography
+                          component="span"
+                          sx={{
+                            display: 'inline-block',
+                            px: '12px',
+                            py: '6px',
+                            borderRadius: '6px',
+                            bgcolor: `rgba(${d.roseRgb}, 0.1)`,
+                            fontFamily: d.sans,
+                            fontWeight: weight.bold,
+                            fontSize: 12,
+                            color: d.rose,
+                          }}
+                        >
+                          {puppy.breed_group}
+                        </Typography>
                       </Box>
                     )}
-                    <CardContent>
-                      <Typography variant="h3" component="h3" sx={{ mb: 1 }}>
-                        {puppy.name}
-                      </Typography>
-                      {/* Skip chips when the backend used the "n/a" sentinel */}
-                      <Stack direction="row" flexWrap="wrap" useFlexGap spacing={1} sx={{ mb: 1.5 }}>
-                        {puppy.size !== 'n/a' && (
-                          <Chip label={puppy.size} size="small" color="secondary" />
-                        )}
-                        {puppy.age !== 'n/a' && (
-                          <Chip label={`${puppy.age} yrs`} size="small" variant="outlined" />
-                        )}
-                        {puppy.breed_group !== 'n/a' && (
-                          <Chip label={puppy.breed_group} size="small" variant="outlined" />
-                        )}
-                      </Stack>
-                      {puppy.temperament !== 'n/a' && (
-                        <Typography variant="body2" color="text.secondary">
-                          {puppy.temperament}
-                        </Typography>
+
+                    <Stack spacing={0.75}>
+                      {puppy.size !== 'n/a' && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Icon icon={icons.scale} />
+                          <Typography sx={metaTextSx}>
+                            Size:{' '}
+                            <Box
+                              component="span"
+                              sx={{ fontWeight: weight.bold, color: d.ink }}
+                            >
+                              {puppy.size}
+                            </Box>
+                          </Typography>
+                        </Box>
                       )}
-                      {puppy.weight !== 'n/a' && (
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-                          Weight: {puppy.weight}
-                        </Typography>
+                      {puppy.age !== 'n/a' && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Icon icon={icons.clock} />
+                          <Typography sx={metaTextSx}>
+                            Lifespan:{' '}
+                            <Box
+                              component="span"
+                              sx={{ fontWeight: weight.bold, color: d.ink }}
+                            >
+                              {puppy.age} years
+                            </Box>
+                          </Typography>
+                        </Box>
                       )}
-                    </CardContent>
-                  </Card>
-                ))}
+                    </Stack>
+                  </Stack>
+                </Box>
+              ))}
             </Box>
-          </Box>
+          )}
 
           <Footer />
-        </Container>
+        </Box>
       </Box>
     </Fade>
   )
