@@ -14,12 +14,16 @@ type ProjectTileProps = {
 }
 
 export function ProjectTile({ project, index = 0 }: ProjectTileProps) {
+  const href = project.href
+  const linkProps = href
+    ? { component: 'a' as const, href }
+    : { component: RouterLink, to: `/${project.slug}` }
+
   return (
     // Flat card per the Figma frame: no surface, border, or rounding — the
     // whole tile is the link, since the design has no separate "view" cue.
     <Box
-      component={RouterLink}
-      to={`/${project.slug}`}
+      {...linkProps}
       sx={{
         display: 'flex',
         flexDirection: 'column',
