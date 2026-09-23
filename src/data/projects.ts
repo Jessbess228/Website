@@ -17,15 +17,15 @@ export const projects: Project[] = [
       'Fetches dog breed data from The Dog API into SQLite, with a searchable Django API.',
     stack: ['Python', 'Django', 'SQLite', 'REST API'],
     body: [
-      'This project fetches dog profiles from The Dog API, stores them in SQLite via the Django ORM, and exposes a searchable REST API for the portfolio.',
-      'A background job re-queries the Dog API on a code-configured interval so the collection grows over time instead of being wiped each run.',
+      'This project fetches dog profiles from a public API called The Dog API, it then stores them in SQLite via the Django ORM. It then exposes a searchable REST API with breed info.',
+      'A background script re-queries the Dog API on an interval, handles duplicates and accumulates unique breed data over time.',
     ],
   },
   {
     slug: 'sync',
     title: 'Website Builder',
     summary:
-      'A website prototype for a client that has a visual page builder to allow edits on their side.',
+      'A website prototype for a client, featuring a visual page builder to allow edits on their side.',
     stack: ['React', 'Vite', 'Puck'],
     body: [
       'This is a Vite + React site that uses Puck as a visual layout manager.',
