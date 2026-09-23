@@ -15,7 +15,7 @@ export function SyncConsultingPage() {
       <Box
         component="iframe"
         title="Website Builder"
-        src="/sync-app/"
+        src="/website-builder"
         sx={{
           flex: 1,
           width: '100%',

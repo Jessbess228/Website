@@ -22,7 +22,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'sync',
+    slug: 'website-builder',
     title: 'Website Builder',
     summary:
       'A website prototype for a client, featuring a visual page builder to allow edits on their side.',

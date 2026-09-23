@@ -36,6 +36,8 @@ export function ProjectPage() {
     )
   }
 
+  const isWebsiteBuilder = project.slug === 'website-builder'
+
   return (
     <Fade in timeout={reduceMotion ? 0 : 500}>
       <Box component="main">
@@ -91,6 +93,24 @@ export function ProjectPage() {
               ))}
             </Stack>
           </Box>
+
+          {isWebsiteBuilder && (
+            <Box
+              component="iframe"
+              title="Website Builder"
+              src="http://127.0.0.1:5174/website-builder/"
+              sx={{
+                mt: 4,
+                width: '100%',
+                height: 'calc(100vh - 220px)',
+                minHeight: 640,
+                border: 0,
+                display: 'block',
+                borderRadius: 2,
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+              }}
+            />
+          )}
 
           <Footer />
         </Container>

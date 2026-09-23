@@ -48,9 +48,9 @@ python manage.py migrate
 python manage.py runserver 8080
 ```
 
-### Sync Consulting (required for `/sync-consulting`)
+### Sync Consulting (required for `/website-builder`)
 
-In another terminal, run the sibling app (Vite proxies `/sync-app` → `:5174`):
+In another terminal, run the sibling app (Vite proxies `/website-builder` → `:5174`):
 
 ```bash
 cd ../Sync-Consulting
@@ -58,9 +58,9 @@ npm install
 npm run dev
 ```
 
-Then open `/sync-consulting` on the portfolio. The live site and Admin page builder load in an iframe from `/sync-app/`.
+Then open `/website-builder` on the portfolio. The live site and Admin page builder load in an iframe from `/website-builder/`.
 
-For production, serve Sync Consulting `dist/` under `/sync-app/` via Caddy (same origin), similar to the `/api` proxy for puppies.
+For production, serve Sync Consulting `dist/` under `/website-builder/` via Caddy (same origin), similar to the `/api` proxy for puppies.
 
 ---
 
