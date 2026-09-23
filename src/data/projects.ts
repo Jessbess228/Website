@@ -6,12 +6,6 @@ export type Project = {
   /** Tech chips shown on the tile / project header */
   stack: string[]
   body: string[]
-  /**
-   * If set, the home tile is a normal link to this path (full navigation)
-   * instead of a React Router route. Used for the Sync app, which lives at
-   * /sync/ on the same origin rather than inside this SPA.
-   */
-  href?: string
 }
 
 /** Ordered list shown on the home Projects section. */
@@ -33,10 +27,9 @@ export const projects: Project[] = [
     summary:
       'A website prototype for a client that has a visual page builder to allow edits on their side.',
     stack: ['React', 'Vite', 'Puck'],
-    href: '/sync/',
     body: [
-      'Sync Consulting is a standalone Vite + React marketing site with a full Puck visual layout manager.',
-      'Open Admin on the embedded site to drag blocks, edit copy and styling, then save — the public page re-renders from the same JSON layout (persisted in localStorage).',
+      'This is a Vite + React site that uses Puck as a visual layout manager.',
+      'To edit copy and styling click the pen icon in the footer — On save, the page re-renders from the JSON layout generated, this is currently persisted in localStorage at this stage with database integration pending.',
     ],
   },
 ]

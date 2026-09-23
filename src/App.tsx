@@ -3,6 +3,7 @@ import { Nav } from './components/Nav'
 import { Home } from './pages/Home'
 import { ProjectPage } from './pages/ProjectPage'
 import { PuppiesPage } from './pages/PuppiesPage'
+import { SyncConsultingPage } from './pages/SyncConsultingPage'
 
 export default function App() {
   return (
@@ -28,11 +29,15 @@ export default function App() {
         <Route path="/puppies" element={<PuppiesPage />} />
 
         {/*
+          Website Builder host. Nav is this SPA; the iframe loads the Sync app
+          from /sync-app/ (Vite proxies to :5174 in dev; Caddy in production).
+        */}
+        <Route path="/sync" element={<SyncConsultingPage />} />
+
+        {/*
           Generic project write-up.
           `:slug` is a URL param (e.g. /puppies would match here too if the
           dedicated route above did not exist). Looked up in data/projects.ts.
-          The Website Builder tile is a plain /sync/ link, not this route —
-          that path is the Sync-Consulting app (Vite base + Router basename).
         */}
         <Route path="/:slug" element={<ProjectPage />} />
 
