@@ -98,7 +98,7 @@ export function ProjectPage() {
             <Box
               component="iframe"
               title="Website Builder"
-              src="http://127.0.0.1:5174/website-builder/"
+              src="/website-builder/"
               sx={{
                 mt: 4,
                 width: '100%',
