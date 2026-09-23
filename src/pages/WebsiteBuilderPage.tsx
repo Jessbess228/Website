@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 
 /** Portfolio host: Website Nav stays in App.tsx; the builder fills the rest. */
-export function SyncConsultingPage() {
+export function WebsiteBuilderPage() {
   return (
     <Box
       component="main"
