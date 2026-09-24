@@ -28,8 +28,8 @@ export const projects: Project[] = [
       'A website prototype for a client, featuring a visual page builder to allow edits on their side.',
     stack: ['React', 'Vite', 'Puck'],
     body: [
-      'This is a Vite + React site that uses Puck as a visual layout manager.',
-      'To edit copy and styling click the pen icon in the footer — On save, the page re-renders from the JSON layout generated, this is currently persisted in localStorage at this stage with database integration pending.',
+      'This is a Vite + React site that uses Puck as a visual layout manager and booking form which sends contents to the client email.',
+      'To edit copy and styling click the pen icon in the footer — On save, the page overwrites a JSON layout file, this is persisted in disk storage on my ec2 instance.',
     ],
   },
   {
