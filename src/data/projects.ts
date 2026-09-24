@@ -32,6 +32,13 @@ export const projects: Project[] = [
       'To edit copy and styling click the pen icon in the footer — On save, the page re-renders from the JSON layout generated, this is currently persisted in localStorage at this stage with database integration pending.',
     ],
   },
+  {
+    slug: 'web-server',
+    title: 'Web Server',
+    summary: 'Coming Soon',
+    stack: [],
+    body: ['Coming Soon'],
+  },
 ]
 
 /** Find a project by URL slug, or undefined if the slug is unknown. */

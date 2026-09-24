@@ -1,13 +1,34 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Nav } from './components/Nav'
 import { Home } from './pages/Home'
 import { ProjectPage } from './pages/ProjectPage'
 import { PuppiesPage } from './pages/PuppiesPage'
 
+function scrollWindowToTop() {
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+}
+
+/** Client-side links keep the previous scroll; reset so project pages start at the top. */
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    window.history.scrollRestoration = 'manual'
+    scrollWindowToTop()
+    // Browser restoration can run after this effect; win that race on the next frame.
+    const frame = requestAnimationFrame(scrollWindowToTop)
+    return () => cancelAnimationFrame(frame)
+  }, [pathname])
+
+  return null
+}
+
 export default function App() {
   return (
     // Enables useNavigate, Link, useParams, useLocation everywhere under it
     <BrowserRouter>
+      <ScrollToTop />
       {/* Sticky header — stays mounted across page changes */}
       <Nav />
 

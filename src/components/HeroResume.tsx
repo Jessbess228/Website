@@ -28,6 +28,7 @@ function BlockLabel({ children }: { children: ReactNode }) {
 type TimelineEntryProps = {
   title: string
   org: string
+  orgHref?: string
   dates: string
   /** Draws the connector rail down to the next entry. Omit on the last one. */
   showConnector?: boolean
@@ -35,7 +36,7 @@ type TimelineEntryProps = {
 }
 
 /** One dotted-rail row, shared by the Experience and Education blocks. */
-function TimelineEntry({ title, org, dates, showConnector, children }: TimelineEntryProps) {
+function TimelineEntry({ title, org, orgHref, dates, showConnector, children }: TimelineEntryProps) {
   return (
     <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
       {/* Rail: 6px dot, then a hairline that stretches to the next entry */}
@@ -88,8 +89,23 @@ function TimelineEntry({ title, org, dates, showConnector, children }: TimelineE
               {title}
             </Typography>
             <Typography
-              component="span"
-              sx={{ fontFamily: d.sans, fontWeight: weight.bold, fontSize: 14, color: d.rose }}
+              component={orgHref ? 'a' : 'span'}
+              href={orgHref}
+              target={orgHref ? '_blank' : undefined}
+              rel={orgHref ? 'noopener noreferrer' : undefined}
+              sx={{
+                fontFamily: d.sans,
+                fontWeight: weight.bold,
+                fontSize: 14,
+                color: d.rose,
+                textDecoration: 'none',
+                ...(orgHref
+                  ? {
+                      '&:hover': { textDecoration: 'underline', textUnderlineOffset: '3px' },
+                      '&:focus-visible': { outline: `2px solid ${d.rose}`, outlineOffset: 3 },
+                    }
+                  : {}),
+              }}
             >
               {org}
             </Typography>
@@ -402,6 +418,7 @@ export function HeroResume() {
                 key={`${job.company}-${job.title}`}
                 title={job.title}
                 org={job.company}
+                orgHref={job.href}
                 dates={job.dates}
                 showConnector={i < experience.length - 1}
               >

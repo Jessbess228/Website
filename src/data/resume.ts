@@ -24,6 +24,8 @@ export const summary = `I'm Jess — A current computer science student ready to
 export type ExperienceItem = {
   title: string
   company: string
+  /** Company site, shown as a link on the company name. */
+  href?: string
   dates: string
   bullets: string[]
 }
@@ -32,6 +34,7 @@ export const experience: ExperienceItem[] = [
   {
     title: 'Software Engineering Intern',
     company: 'Propeller',
+    href: 'https://www.propelleraero.com/',
     dates: 'Aug 2025 – Feb 2026',
     bullets: [
       'Responsible for the end-to-end creation of a developer tool to enable more efficient querying of a proprietary internal database.',
@@ -42,6 +45,7 @@ export const experience: ExperienceItem[] = [
   {
     title: 'Winter Intern',
     company: 'DWS',
+    href: 'https://dws.hcltech.com/',
     dates: 'June 2025 – July 2025',
     bullets: [
       'Learnt about the large-scale system migration process undertaken by NSW Registry of Births, Deaths and Marriages from the perspective of different stakeholders.',

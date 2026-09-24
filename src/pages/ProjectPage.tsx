@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Stack from '@mui/material/Stack'
@@ -8,7 +7,6 @@ import Typography from '@mui/material/Typography'
 // Detects OS / browser “Reduce motion” preference
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Link as RouterLink, useParams } from 'react-router-dom'
-import { BackHome } from '../components/BackHome'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
 
@@ -43,8 +41,6 @@ export function ProjectPage() {
       <Box component="main">
         <Container maxWidth="md" sx={{ pt: { xs: 5, md: 8 }, pb: 2 }}>
           <Box sx={{ maxWidth: 720, mx: 'auto' }}>
-            <BackHome />
-
             {/* Small label above the title */}
             <Typography
               variant="overline"
@@ -64,26 +60,6 @@ export function ProjectPage() {
             >
               {project.title}
             </Typography>
-
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              {project.summary}
-            </Typography>
-
-            {/*
-              Tech stack as chips.
-              flexWrap + useFlexGap = chips wrap cleanly on narrow screens.
-            */}
-            <Stack
-              direction="row"
-              flexWrap="wrap"
-              useFlexGap
-              spacing={1}
-              sx={{ mb: 4 }}
-            >
-              {project.stack.map((tech) => (
-                <Chip key={tech} label={tech} size="small" color="secondary" />
-              ))}
-            </Stack>
 
             <Stack spacing={2}>
               {project.body.map((paragraph) => (
