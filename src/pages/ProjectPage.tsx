@@ -69,25 +69,26 @@ export function ProjectPage() {
               ))}
             </Stack>
           </Box>
+        </Container>
 
-          {isWebsiteBuilder && (
-            <Box
-              component="iframe"
-              title="Website Builder"
-              src="/website-builder/"
-              sx={{
-                mt: 4,
-                width: '100%',
-                height: 'calc(100vh - 220px)',
-                minHeight: 640,
-                border: 0,
-                display: 'block',
-                borderRadius: 2,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-              }}
-            />
-          )}
+        {isWebsiteBuilder && (
+          <Box
+            component="iframe"
+            title="Website Builder"
+            src="/website-builder/"
+            sx={{
+              mt: 4,
+              display: 'block',
+              width: '100%',
+              height: 'calc(100vh - 220px)',
+              minHeight: 640,
+              border: 0,
+              borderRadius: 0,
+            }}
+          />
+        )}
 
+        <Container maxWidth="md">
           <Footer />
         </Container>
       </Box>
