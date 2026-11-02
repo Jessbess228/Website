@@ -12,12 +12,6 @@ export default defineConfig({
         // Rewrite the Host header so Django sees a normal local request
         changeOrigin: true,
       },
-      // Sync Consulting app (sibling repo, Vite base `/website-builder`, port 5174)
-      '/website-builder': {
-        target: 'http://127.0.0.1:5174',
-        changeOrigin: true,
-        ws: true,
-      },
     },
   },
 })
