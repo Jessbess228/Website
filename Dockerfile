@@ -1,14 +1,14 @@
 # Cloud Run image: Vite SPA + Django puppy API + baked SQLite snapshot.
 # Website builder is not included.
 
-FROM node:22-alpine AS frontend
+FROM node:22-bookworm-slim AS frontend
 WORKDIR /app
-COPY package.json package-lock.json ./
-# npm ci skips Rollup's Linux binary when the lockfile was generated on macOS
-# (https://github.com/npm/cli/issues/4828).
-RUN npm install --ignore-scripts
+RUN corepack enable && corepack prepare yarn@4.18.0 --activate
+COPY package.json yarn.lock .yarnrc.yml ./
+# Yarn's lockfile includes Rollup's Linux binaries; npm's macOS lockfile does not.
+RUN yarn install --immutable
 COPY . .
-RUN npm run build
+RUN yarn build
 
 FROM python:3.12-slim
 RUN apt-get update \
