@@ -4,7 +4,9 @@
 FROM node:22-alpine AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+# npm ci skips Rollup's Linux binary when the lockfile was generated on macOS
+# (https://github.com/npm/cli/issues/4828).
+RUN npm install --ignore-scripts
 COPY . .
 RUN npm run build
 
