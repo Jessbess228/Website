@@ -21,10 +21,8 @@ if [ -n "${SYNC_APP_ORIGIN:-}" ]; then
   origin="$(strip_slash "$SYNC_APP_ORIGIN")"
   host="$(host_of "$origin")"
   cat > /etc/nginx/conf.d/proxies/sync.conf <<EOF
-location = /website-builder {
-    return 301 /website-builder/;
-}
-
+# Do not redirect /website-builder — that path is the portfolio SPA project page.
+# Proxy only /website-builder/… (iframe + builder assets).
 location /website-builder/ {
     proxy_pass ${origin};
     proxy_http_version 1.1;
@@ -53,10 +51,6 @@ location /cms-api {
 EOF
 else
   cat > /etc/nginx/conf.d/proxies/sync.conf <<'EOF'
-location = /website-builder {
-    return 301 /website-builder/;
-}
-
 location /website-builder/ {
     default_type text/plain;
     return 503 "Website builder is not configured. Set SYNC_APP_ORIGIN on this Cloud Run service.";
