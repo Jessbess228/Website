@@ -34,7 +34,7 @@ export function ProjectPage() {
     )
   }
 
-  const isWebsiteBuilder = project.slug === 'website-builder'
+  const isWebsiteBuilder = project.slug === 'site-builder'
 
   return (
     <Fade in timeout={reduceMotion ? 0 : 500}>

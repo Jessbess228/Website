@@ -21,16 +21,25 @@ if [ -n "${SYNC_APP_ORIGIN:-}" ]; then
   origin="$(strip_slash "$SYNC_APP_ORIGIN")"
   host="$(host_of "$origin")"
   cat > /etc/nginx/conf.d/proxies/sync.conf <<EOF
-# Do not redirect /website-builder — that path is the portfolio SPA project page.
-# Proxy only /website-builder/… (iframe + builder assets).
+# /website-builder (no slash) was the old project URL; send it to the SPA route.
+location = /website-builder {
+    return 308 /site-builder;
+}
+
+# Proxy /website-builder/… (iframe + builder assets) to the sync Cloud Run service.
 location /website-builder/ {
     proxy_pass ${origin};
     proxy_http_version 1.1;
     proxy_ssl_server_name on;
     proxy_set_header Host ${host};
+    proxy_set_header X-Forwarded-Host \$host;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect http://${host}/ https://\$host/;
+    proxy_redirect https://${host}/ https://\$host/;
+    proxy_redirect http://\$host:8080/ https://\$host/;
+    proxy_redirect https://\$host:8080/ https://\$host/;
     # Cloud Run may send DENY; same-origin iframe needs these stripped at the portfolio proxy.
     proxy_hide_header X-Frame-Options;
     proxy_hide_header Content-Security-Policy;
@@ -44,13 +53,19 @@ location /cms-api {
     proxy_http_version 1.1;
     proxy_ssl_server_name on;
     proxy_set_header Host ${host};
+    proxy_set_header X-Forwarded-Host \$host;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_cookie_path / /;
 }
 EOF
 else
   cat > /etc/nginx/conf.d/proxies/sync.conf <<'EOF'
+location = /website-builder {
+    return 308 /site-builder;
+}
+
 location /website-builder/ {
     default_type text/plain;
     return 503 "Website builder is not configured. Set SYNC_APP_ORIGIN on this Cloud Run service.";
