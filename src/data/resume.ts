@@ -19,7 +19,7 @@ export const contact = {
   },
 }
 
-export const summary = `I'm Jess — A current computer science student ready to take on challenges and begin my career in Software Engineering. \n\n By using problem-solving and task prioritisation skills I can quickly close any knowledge gaps, this allows me to hit the ground running in any new environment. \n Curiosity drives my interest in learning new skills as I aim to expand my knowledge of front and backend applications.`
+export const summary = `I'm Jess — A computer science graduate with experience in professional frontend development and a growing understanding of back end development. \n\n Currently learning Go in boot.devs 'create a webserver' course.`
 
 export type ExperienceItem = {
   title: string
@@ -71,6 +71,6 @@ export const skillCategories: SkillCategory[] = [
     items: ['Java', 'Python', 'TypeScript', 'SQL', 'JavaScript', 'Rest APIs' , 'Web Sockets',],
   },
   {
-    items: ['Git', 'Docker', 'Scripting', 'Unit Testing', 'ETL processes', 'CI/CD pipelines'],
+    items: ['Git', 'Docker', 'Scripting', 'Unit Testing', 'ETL processes', 'CI/CD pipelines', 'Go'],
   },
 ]
