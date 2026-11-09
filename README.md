@@ -58,7 +58,7 @@ npm install
 npm run dev
 ```
 
-Then open `/website-builder` on the portfolio. The live site and Admin page builder load in an iframe from `/website-builder/`.
+Then open `/site-builder` on the portfolio. The live site and Admin page builder load in an iframe from `/website-builder/`.
 
 For production, serve Sync Consulting `dist/` under `/website-builder/` via Caddy (same origin), similar to the `/api` proxy for puppies.
 
