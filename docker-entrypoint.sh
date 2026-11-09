@@ -28,9 +28,14 @@ location /website-builder/ {
     proxy_http_version 1.1;
     proxy_ssl_server_name on;
     proxy_set_header Host ${host};
+    proxy_set_header X-Forwarded-Host \$host;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect http://${host}/ https://\$host/;
+    proxy_redirect https://${host}/ https://\$host/;
+    proxy_redirect http://\$host:8080/ https://\$host/;
+    proxy_redirect https://\$host:8080/ https://\$host/;
     # Cloud Run may send DENY; same-origin iframe needs these stripped at the portfolio proxy.
     proxy_hide_header X-Frame-Options;
     proxy_hide_header Content-Security-Policy;
@@ -44,9 +49,11 @@ location /cms-api {
     proxy_http_version 1.1;
     proxy_ssl_server_name on;
     proxy_set_header Host ${host};
+    proxy_set_header X-Forwarded-Host \$host;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_cookie_path / /;
 }
 EOF
 else
