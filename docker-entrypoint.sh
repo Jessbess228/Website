@@ -33,6 +33,12 @@ location /website-builder/ {
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_set_header X-Real-IP \$remote_addr;
+    # Cloud Run may send DENY; same-origin iframe needs these stripped at the portfolio proxy.
+    proxy_hide_header X-Frame-Options;
+    proxy_hide_header Content-Security-Policy;
+    proxy_hide_header Cross-Origin-Opener-Policy;
+    proxy_hide_header Cross-Origin-Resource-Policy;
+    proxy_hide_header Cross-Origin-Embedder-Policy;
 }
 
 location /cms-api {
