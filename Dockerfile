@@ -1,5 +1,5 @@
 # Cloud Run image: Vite SPA + Django puppy API + baked SQLite snapshot.
-# Website builder is not included.
+# Set SYNC_APP_ORIGIN on Cloud Run to proxy /website-builder/ and /cms-api to the builder service.
 
 FROM node:22-bookworm-slim AS frontend
 WORKDIR /app
