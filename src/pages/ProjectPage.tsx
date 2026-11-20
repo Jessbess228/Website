@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { Footer } from '../components/Footer'
+import { YouTubeEmbed } from '../components/YouTubeEmbed'
 import { getProjectBySlug } from '../data/projects'
 import { videoExplanations, videoScriptsRepoUrl } from '../data/videoExplanations'
 
@@ -73,29 +74,28 @@ export function ProjectPage() {
             </Stack>
 
             {isVideoExplanations && (
-              <Stack spacing={2} sx={{ mt: 4 }}>
-                <Typography variant="h2" component="h2" sx={{ fontSize: '1.35rem' }}>
-                  Episodes
-                </Typography>
-                <Stack component="ol" spacing={1.5} sx={{ pl: 2.5, m: 0 }}>
-                  {videoExplanations.map((episode) => (
-                    <Typography
-                      key={episode.n}
-                      component="li"
-                      variant="body1"
-                      sx={{ display: 'list-item' }}
-                    >
-                      <strong>
-                        {episode.n}. {episode.title}
-                      </strong>
-                      {' — '}
-                      {episode.topic}
-                    </Typography>
-                  ))}
-                </Stack>
+              <Stack spacing={4} sx={{ mt: 4 }}>
                 <Link href={videoScriptsRepoUrl} target="_blank" rel="noopener noreferrer">
                   Open full scripts (VIDEO-SCRIPTS.md on GitHub)
                 </Link>
+                {videoExplanations.map((episode) => (
+                  <Box key={episode.n} component="section">
+                    <Typography
+                      variant="h2"
+                      component="h2"
+                      sx={{ fontSize: '1.25rem', mb: 0.5 }}
+                    >
+                      {episode.n}. {episode.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                      {episode.topic}
+                    </Typography>
+                    <YouTubeEmbed
+                      videoId={episode.youtubeId}
+                      title={`${episode.n}. ${episode.title}`}
+                    />
+                  </Box>
+                ))}
               </Stack>
             )}
           </Box>

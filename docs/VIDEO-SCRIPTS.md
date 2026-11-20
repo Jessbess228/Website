@@ -169,3 +169,9 @@ Containers are like **hotel rooms**—notes on the notepad vanish on the next sw
 - ~140 words/minute for ~2:00 per script.
 - One diagram per video (browser → nginx → app).
 - Show DevTools or `curl` once per layer where code is listed.
+
+## Embedding on the portfolio
+
+After each video is on YouTube, paste its **video ID** (the part after `watch?v=`) into
+`src/data/videoExplanations.ts` for the matching episode. The **Video explanations**
+project page (`/video-explanations`) shows one embed per episode.
