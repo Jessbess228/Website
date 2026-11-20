@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
+import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 // Detects OS / browser “Reduce motion” preference
@@ -9,6 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { Footer } from '../components/Footer'
 import { getProjectBySlug } from '../data/projects'
+import { videoExplanations, videoScriptsRepoUrl } from '../data/videoExplanations'
 
 export function ProjectPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -35,6 +37,7 @@ export function ProjectPage() {
   }
 
   const isWebsiteBuilder = project.slug === 'site-builder'
+  const isVideoExplanations = project.slug === 'video-explanations'
 
   return (
     <Fade in timeout={reduceMotion ? 0 : 500}>
@@ -68,6 +71,33 @@ export function ProjectPage() {
                 </Typography>
               ))}
             </Stack>
+
+            {isVideoExplanations && (
+              <Stack spacing={2} sx={{ mt: 4 }}>
+                <Typography variant="h2" component="h2" sx={{ fontSize: '1.35rem' }}>
+                  Episodes
+                </Typography>
+                <Stack component="ol" spacing={1.5} sx={{ pl: 2.5, m: 0 }}>
+                  {videoExplanations.map((episode) => (
+                    <Typography
+                      key={episode.n}
+                      component="li"
+                      variant="body1"
+                      sx={{ display: 'list-item' }}
+                    >
+                      <strong>
+                        {episode.n}. {episode.title}
+                      </strong>
+                      {' — '}
+                      {episode.topic}
+                    </Typography>
+                  ))}
+                </Stack>
+                <Link href={videoScriptsRepoUrl} target="_blank" rel="noopener noreferrer">
+                  Open full scripts (VIDEO-SCRIPTS.md on GitHub)
+                </Link>
+              </Stack>
+            )}
           </Box>
         </Container>
 

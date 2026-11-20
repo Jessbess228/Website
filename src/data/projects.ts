@@ -33,11 +33,15 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'web-server',
-    title: 'Web Server',
-    summary: 'Coming Soon',
-    stack: [],
-    body: ['Coming Soon'],
+    slug: 'video-explanations',
+    title: 'Video explanations',
+    summary:
+      '~2 minute layman scripts for each layer of jessicaberry.info — portfolio, nginx, Django, builder, CMS, and Cloud Run.',
+    stack: ['Architecture', 'Documentation', 'Cloud Run'],
+    body: [
+      'This project documents how the live site is put together. Each episode is written in plain language for a short screen recording, with code pointers for the layers that handle HTTP routing, API reads, CMS writes, and two-service proxying.',
+      'Full scripts live in the repo on the videos branch: docs/VIDEO-SCRIPTS.md. Use them as narration notes while you show the matching files in the editor or DevTools.',
+    ],
   },
 ]
 
