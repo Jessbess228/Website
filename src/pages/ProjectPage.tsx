@@ -38,7 +38,7 @@ export function ProjectPage() {
   }
 
   const isWebsiteBuilder = project.slug === 'site-builder'
-  const isVideoExplanations = project.slug === 'video-explanations'
+  const isLayersSeries = project.slug === 'theres-layers-to-this'
 
   return (
     <Fade in timeout={reduceMotion ? 0 : 500}>
@@ -73,7 +73,7 @@ export function ProjectPage() {
               ))}
             </Stack>
 
-            {isVideoExplanations && (
+            {isLayersSeries && (
               <Stack spacing={4} sx={{ mt: 4 }}>
                 <Link href={videoScriptsRepoUrl} target="_blank" rel="noopener noreferrer">
                   Open full scripts (VIDEO-SCRIPTS.md on GitHub)

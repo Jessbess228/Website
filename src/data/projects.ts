@@ -33,14 +33,14 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'video-explanations',
-    title: 'Video explanations',
+    slug: 'theres-layers-to-this',
+    title: "Theres Layers to this -",
     summary:
-      '~2 minute layman scripts for each layer of jessicaberry.info — portfolio, nginx, Django, builder, CMS, and Cloud Run.',
+      'Short explainers for each layer of jessicaberry.info — portfolio, nginx, Django, builder, CMS, and Cloud Run.',
     stack: ['Architecture', 'Documentation', 'Cloud Run'],
     body: [
-      'This project documents how the live site is put together. Each episode is written in plain language for a short screen recording, with code pointers for the layers that handle HTTP routing, API reads, CMS writes, and two-service proxying.',
-      'Full scripts live in the repo on the videos branch: docs/VIDEO-SCRIPTS.md. Use them as narration notes while you show the matching files in the editor or DevTools.',
+      'There is more going on under this site than a single React page. Each episode is a ~2 minute layman walkthrough, with code pointers for routing, API reads, CMS writes, and two-service proxying.',
+      'Narration scripts live in docs/VIDEO-SCRIPTS.md on the videos branch. YouTube embeds below match each layer.',
     ],
   },
 ]
