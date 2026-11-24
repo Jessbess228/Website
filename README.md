@@ -298,3 +298,14 @@ ps aux | grep -E 'caddy|manage.py|serve -s' | grep -v grep
 | `npm run dev` | Local Vite dev server |
 | `npm run build` | Typecheck + production build → `dist/` |
 | `npm run preview` | Local preview of `dist/` |
+| `yarn ci:status` | List recent GitHub Actions runs for the current branch ([GitHub CLI](https://cli.github.com/) + `gh auth login`) |
+| `yarn ci:watch` | After you push or open a PR, stream the latest CI run live until it passes or fails |
+
+`git push` does not show CI in the terminal. Protected `main` only accepts merges via PR. Typical flow:
+
+```bash
+git push -u origin your-branch
+yarn ci:watch
+```
+
+`yarn ci:watch other-branch` watches that branch’s latest run.
