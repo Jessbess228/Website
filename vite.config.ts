@@ -2,9 +2,13 @@ import faroUploader from '@grafana/faro-rollup-plugin'
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 
+const nodeProcess = (
+  globalThis as { process?: { cwd: () => string; env: Record<string, string | undefined> } }
+).process
+
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  const faroApiKey = env.GRAFANA_API_TOKEN || process.env.GRAFANA_API_TOKEN
+  const env = loadEnv(mode, nodeProcess?.cwd() ?? '.', '')
+  const faroApiKey = env.GRAFANA_API_TOKEN || nodeProcess?.env.GRAFANA_API_TOKEN
 
   return {
     build: { sourcemap: 'hidden' },
