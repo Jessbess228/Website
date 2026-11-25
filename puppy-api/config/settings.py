@@ -72,13 +72,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATA_DIR = BASE_DIR / "data_files"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+def _puppies_database_path() -> Path:
+    if override := os.getenv("PUPPIES_DATABASE_PATH"):
+        return Path(override)
+    repo_db = BASE_DIR.parent / "data" / "puppies.db"
+    if repo_db.is_file():
+        return repo_db
+    return BASE_DIR / "data" / "puppies.db"
+
+
+PUPPIES_DATABASE_PATH = _puppies_database_path()
+PUPPIES_DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": DATA_DIR / "puppies.db",
+        "NAME": PUPPIES_DATABASE_PATH,
     }
 }
 

@@ -27,7 +27,9 @@ RUN pip install --no-cache-dir \
  && opentelemetry-bootstrap -a install
 
 COPY puppy-api /opt/puppy
-COPY data/puppies.db /opt/puppy/data_files/puppies.db
+# Single SQLite file — always overwrite any empty copy from the build context.
+COPY data/puppies.db /opt/puppy/data/puppies.db
+ENV PUPPIES_DATABASE_PATH=/opt/puppy/data/puppies.db
 COPY --from=frontend /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY docker-entrypoint.sh /docker-entrypoint.sh
