@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@grafana/faro-rollup-plugin": "^0.13.2",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
