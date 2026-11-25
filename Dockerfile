@@ -8,6 +8,9 @@ COPY package.json yarn.lock .yarnrc.yml ./
 # Yarn's lockfile includes Rollup's Linux binaries; npm's macOS lockfile does not.
 RUN yarn install --immutable
 COPY . .
+# Available only while yarn build runs. A Cloud Run runtime variable is too late for this upload.
+ARG GRAFANA_API_TOKEN
+ENV GRAFANA_API_TOKEN=$GRAFANA_API_TOKEN
 RUN yarn build
 
 FROM python:3.12-slim

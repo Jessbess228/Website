@@ -7,6 +7,9 @@ dist-ssr
 .pnp.*
 *.log
 *.local
+.env
+.env.*
+!.env.example
 .DS_Store
 .vscode
 .idea
