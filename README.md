@@ -323,3 +323,5 @@ yarn ship
 `yarn ship` runs `git push -u origin HEAD`, opens a PR if there isn’t one yet (title/body from commits via `--fill`), prints the PR link, then streams CI until it passes or fails. Merge on GitHub when green; locally: `git checkout main && git pull`.
 
 `yarn ci:watch other-branch` watches CI without pushing.
+
+**Production deploy is separate from GitHub:** after a PR merges to `main`, rebuild/deploy the **website** Cloud Run service (`asia-east1`). Image name must be lowercase `website` (not `Website`). See [docs/deploy-cloud-run.md](docs/deploy-cloud-run.md).
