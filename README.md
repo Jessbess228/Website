@@ -35,18 +35,19 @@ npx --yes serve -s dist -l 9000
 
 ### Puppy API (required for `/puppies`)
 
-In a second terminal:
+In a second terminal (this repo’s embedded `puppy-api` uses **`data/puppies.db`** at the repo root):
 
 ```bash
-cd ../puppy_data-collection
+cd puppy-api
 python3.12 -m venv .venv
 source .venv/bin/activate
-pip install -U pip
-pip install -e .
-cp .env.example .env   # set THE_DOG_API_KEY
-python manage.py migrate
+pip install -U pip django djangorestframework django-cors-headers python-dotenv gunicorn
+export DJANGO_ALLOWED_HOSTS='127.0.0.1,localhost'
+export ENABLE_FETCH_SCHEDULER=false
 python manage.py runserver 8080
 ```
+
+Quick check: `curl -s http://127.0.0.1:8080/api/puppies/filters/` should return JSON.
 
 ### Sync Consulting (required for `/website-builder`)
 
@@ -300,12 +301,25 @@ ps aux | grep -E 'caddy|manage.py|serve -s' | grep -v grep
 | `npm run preview` | Local preview of `dist/` |
 | `yarn ci:status` | List recent GitHub Actions runs for the current branch ([GitHub CLI](https://cli.github.com/) + `gh auth login`) |
 | `yarn ci:watch` | After you push or open a PR, stream the latest CI run live until it passes or fails |
+| `yarn ship` | Push current branch, create PR to `main` if needed (`gh pr create --fill`), print PR URL, then `ci:watch` |
 
-`git push` does not show CI in the terminal. Protected `main` only accepts merges via PR. Typical flow:
+### Ship changes to `main` (PR + CI in the terminal)
+
+**One-time:**
 
 ```bash
-git push -u origin your-branch
-yarn ci:watch
+brew install gh   # or https://cli.github.com/
+gh auth login
 ```
 
-`yarn ci:watch other-branch` watches that branch’s latest run.
+**Each feature** (commit on a branch, not on `main`):
+
+```bash
+git checkout -b my-change
+# … edit, git add, git commit …
+yarn ship
+```
+
+`yarn ship` runs `git push -u origin HEAD`, opens a PR if there isn’t one yet (title/body from commits via `--fill`), prints the PR link, then streams CI until it passes or fails. Merge on GitHub when green; locally: `git checkout main && git pull`.
+
+`yarn ci:watch other-branch` watches CI without pushing.
