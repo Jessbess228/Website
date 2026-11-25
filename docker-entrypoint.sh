@@ -81,7 +81,9 @@ fi
 envsubst '${PORT}' < /etc/nginx/templates/default.conf.template \
   > /etc/nginx/conf.d/default.conf
 
-PUPPIES_DB="${PUPPIES_DATABASE_PATH:-/opt/puppy/data/puppies.db}"
+# Ignore a stale Cloud Run env pointing at old data_files/puppies.db paths.
+export PUPPIES_DATABASE_PATH="/opt/puppy/data/puppies.db"
+PUPPIES_DB="$PUPPIES_DATABASE_PATH"
 if [ ! -s "$PUPPIES_DB" ]; then
   echo "ERROR: puppies.db is missing or empty at $PUPPIES_DB (image should COPY data/puppies.db)" >&2
   exit 1

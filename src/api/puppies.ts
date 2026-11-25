@@ -131,7 +131,7 @@ function statusMessage(label: string, status: number, bodyHint?: string): string
       ? bodyHint
       : local
         ? `Django failed while handling the request. Confirm \`data/puppies.db\` exists and has breed data; see the terminal where runserver is running.`
-        : `Django failed while handling the request. ${prodApiHint()}`
+        : `Django failed while handling the request. ${prodApiHint()} Also try: curl https://jessicaberry.info/api/puppies/health/`
     return `${label}: server error (${status}). ${tail}`
   }
 

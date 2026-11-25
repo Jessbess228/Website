@@ -76,7 +76,7 @@ def _puppies_database_path() -> Path:
     if override := os.getenv("PUPPIES_DATABASE_PATH"):
         return Path(override)
     repo_db = BASE_DIR.parent / "data" / "puppies.db"
-    if repo_db.is_file():
+    if repo_db.is_file() and repo_db.stat().st_size > 0:
         return repo_db
     return BASE_DIR / "data" / "puppies.db"
 
