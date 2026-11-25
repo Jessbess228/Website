@@ -27,16 +27,17 @@ RUN pip install --no-cache-dir \
  && opentelemetry-bootstrap -a install
 
 COPY puppy-api /opt/puppy
-# Single SQLite file — always overwrite any empty copy from the build context.
-COPY data/puppies.db /opt/puppy/data/puppies.db
+# Immutable bake; entrypoint copies to the live path each boot.
+COPY data/puppies.db /opt/puppy/puppies.db.baked
 ENV PUPPIES_DATABASE_PATH=/opt/puppy/data/puppies.db
-RUN python3 -c "import sqlite3; c=sqlite3.connect('/opt/puppy/data/puppies.db'); n=c.execute('SELECT COUNT(*) FROM dogs_puppy').fetchone()[0]; assert n>0, 'dogs_puppy empty'; print(f'puppies.db ok ({n} rows)')"
+RUN python3 -c "import sqlite3; c=sqlite3.connect('/opt/puppy/puppies.db.baked'); n=c.execute('SELECT COUNT(*) FROM dogs_puppy').fetchone()[0]; assert n>0, 'dogs_puppy empty'; print(f'puppies.db ok ({n} rows)')"
 COPY --from=frontend /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 ENV PORT=8080 \
+    DJANGO_SETTINGS_MODULE=config.settings \
     DJANGO_DEBUG=false \
     ENABLE_FETCH_SCHEDULER=false \
     DJANGO_ALLOWED_HOSTS=* \
