@@ -8,8 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "ci:status": "bash scripts/ci-status.sh",
-    "ci:watch": "bash scripts/watch-ci.sh",
-    "ship": "bash scripts/ship.sh"
+    "ci:watch": "bash scripts/watch-ci.sh"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

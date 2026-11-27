@@ -1,8 +1,5 @@
 import re
-import sqlite3
-from pathlib import Path
 
-from django.conf import settings
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.request import Request
@@ -33,41 +30,6 @@ def _parse_optional_float(raw: str | None) -> float | None:
         return float(raw)
     except ValueError:
         return None
-
-
-class PuppyDbHealthView(APIView):
-    """JSON diagnostics for the baked SQLite file (curl from production when /puppies 500s)."""
-
-    authentication_classes: list = []
-    permission_classes: list = []
-
-    def get(self, _request: Request) -> Response:
-        db_path = Path(settings.DATABASES["default"]["NAME"])
-        try:
-            if not db_path.is_file() or db_path.stat().st_size == 0:
-                return Response(
-                    {
-                        "ok": False,
-                        "path": str(db_path),
-                        "error": "missing or zero-byte puppies.db",
-                    },
-                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
-                )
-            with sqlite3.connect(db_path) as con:
-                row_count = con.execute("SELECT COUNT(*) FROM dogs_puppy").fetchone()[0]
-            return Response(
-                {
-                    "ok": True,
-                    "path": str(db_path),
-                    "bytes": db_path.stat().st_size,
-                    "dogs_puppy_rows": row_count,
-                }
-            )
-        except Exception as exc:  # noqa: BLE001 — health probe for operators
-            return Response(
-                {"ok": False, "path": str(db_path), "error": str(exc)},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE,
-            )
 
 
 class PuppyListView(APIView):
