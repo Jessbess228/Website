@@ -3,8 +3,8 @@
 
 FROM node:22-bookworm-slim AS frontend
 WORKDIR /app
-ARG VITE_PUPPY_API_BASE_URL
-ENV VITE_PUPPY_API_BASE_URL=https://puppy-collector-190658296050.australia-southeast1.run.app/
+ARG VITE_PUPPY_API_BASE_URL=https://puppy-collector-190658296050.australia-southeast1.run.app
+ENV VITE_PUPPY_API_BASE_URL=${VITE_PUPPY_API_BASE_URL}
 RUN corepack enable && corepack prepare yarn@4.18.0 --activate
 COPY package.json yarn.lock .yarnrc.yml ./
 # Yarn's lockfile includes Rollup's Linux binaries; npm's macOS lockfile does not.
