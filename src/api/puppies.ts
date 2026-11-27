@@ -3,7 +3,7 @@
  *
  * Used by PuppiesPage. All paths are relative (`/api/…`) so:
  * - `npm run dev` → Vite proxy → Django :8080
- * - production (Cloud Run) → nginx → Gunicorn Django :8081
+ * - production → Caddy → Django :8080
  *
  * Exports:
  * - TypeScript types matching the API JSON
@@ -61,89 +61,30 @@ function toQuery(params: PuppySearchParams): string {
   const qs = search.toString()
   return qs ? `?${qs}` : ''
 }
-
-function runningLocally(): boolean {
-  if (import.meta.env.DEV) return true
-  if (typeof window === 'undefined') return false
-  const host = window.location.hostname
-  return host === 'localhost' || host === '127.0.0.1'
-}
-
-function localApiHint(): string {
-  return 'Start the puppy API: `cd puppy-api && python manage.py runserver 8080` (Vite proxies /api to port 8080).'
-}
-
-function prodApiHint(): string {
-  return 'Check Google Cloud Run → service website → Logs (filter: gunicorn, Traceback, puppies.db).'
-}
-
-async function responseBodyHint(response: Response): Promise<string | undefined> {
-  const contentType = response.headers.get('content-type') ?? ''
-  let body = ''
-  try {
-    body = (await response.text()).slice(0, 2000)
-  } catch {
-    return undefined
-  }
-
-  if (contentType.includes('application/json')) {
-    try {
-      const data = JSON.parse(body) as Record<string, unknown>
-      if (typeof data.detail === 'string' && data.detail.trim()) {
-        return data.detail.trim()
-      }
-    } catch {
-      /* ignore */
-    }
-    return undefined
-  }
-
-  if (contentType.includes('text/html') || body.trimStart().startsWith('<')) {
-    if (response.status >= 500) {
-      return 'Django returned an HTML error page (not JSON) — usually an unhandled exception in the API (e.g. missing SQLite table `dogs_puppy` when `data/puppies.db` is empty).'
-    }
-    return 'Got the SPA HTML page instead of JSON — `/api` is not reaching Django (proxy/nginx routing).'
-  }
-
-  return undefined
-}
-
-function statusMessage(label: string, status: number, bodyHint?: string): string {
-  const local = runningLocally()
-
+  // error handling
+function statusMessage(label: string, status: number): string {
+  // Caddy is up but upstream Django / static server is not
   if (status === 502 || status === 503 || status === 504) {
-    const where = local
-      ? `Upstream Django is not responding. ${localApiHint()}`
-      : `Gunicorn on :8081 is down or nginx could not reach it. ${prodApiHint()}`
-    return `${label}: gateway error (${status}). ${where}`
+    return `${label}: gateway error (${status}). The proxy is up but Django on :8080 (or serve on :9000) is probably down — restart with nohup after SSH login.`
   }
-
   if (status === 404) {
-    return `${label}: not found (404). Django has no route for this URL — check puppy-api URL config.`
+    return `${label}: not found (404). Check the API route exists on Django.`
   }
-
   if (status === 400) {
-    return `${label}: bad request (400). One of the filter query parameters may be invalid.`
+    return `${label}: bad request (400). Check filter values.`
   }
-
   if (status >= 500) {
-    const tail = bodyHint
-      ? bodyHint
-      : local
-        ? `Django failed while handling the request. Confirm \`data/puppies.db\` exists and has breed data; see the terminal where runserver is running.`
-        : `Django failed while handling the request. ${prodApiHint()} Also try: curl https://jessicaberry.info/api/puppies/health/`
-    return `${label}: server error (${status}). ${tail}`
+    return `${label}: server error (${status}). Check Django logs (/tmp/django-8080.log).`
   }
-
-  return `${label}: request failed (HTTP ${status}).`
+  return `${label}: request failed (${status}).`
 }
 
 async function readApiJson<T>(response: Response, label: string): Promise<T> {
-  if (!response.ok) {
-    const bodyHint = await responseBodyHint(response)
-    throw new Error(statusMessage(label, response.status, bodyHint))
+
+ if (!response.ok) {
+    throw new Error(statusMessage(label, response.status))
   }
-  return (await response.json()) as T
+ return (await response.json()) as T
 }
 
 async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal): Promise<T> {
@@ -153,11 +94,9 @@ async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal):
   } catch (err) {
     // Aborts are normal when filters change quickly — rethrow so callers can ignore them
     if ((err as Error).name === 'AbortError') throw err
-    const local = runningLocally()
+    // DNS / connection refused / offline / CORS, etc.
     throw new Error(
-      local
-        ? `${label}: network error — could not reach ${path}. ${localApiHint()}`
-        : `${label}: network error — could not reach ${path}. Check your connection and that the website service is deployed.`,
+      `${label}: network error — could not reach ${path}. Locally run Django on :8080; on EC2 check Caddy and nohup processes.`,
     )
   }
   return readApiJson<T>(response, label)
@@ -188,9 +127,7 @@ export async function fetchPuppies(
 export async function fetchPuppyFilters(signal?: AbortSignal): Promise<PuppyFilters> {
   const data = await apiGetJson<PuppyFilters>('/api/puppies/filters/', 'Puppy filters', signal)
   if (!data || !Array.isArray(data.sizes) || !Array.isArray(data.breed_groups)) {
-    throw new Error(
-      'Puppy filters: JSON shape was unexpected (missing sizes/breed_groups) — the response may be HTML from the wrong upstream.',
-    )
+    throw new Error('Puppy filters: JSON shape was unexpected (missing sizes/breed_groups).')
   }
   return data
 }

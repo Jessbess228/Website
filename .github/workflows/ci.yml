@@ -15,8 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "yarn"
 
-      # setup-node cache: yarn invokes global Yarn 1.x before Corepack; enable Yarn 4 first.
       - name: Enable Corepack (Yarn 4)
         run: |
           corepack enable

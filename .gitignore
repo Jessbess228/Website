@@ -31,11 +31,3 @@ dist-ssr
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
-
-# Python
-__pycache__/
-*.py[cod]
-
-# Single puppies SQLite lives at data/puppies.db (repo root)
-puppy-api/data/
-puppy-api/data_files/

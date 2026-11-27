@@ -11,7 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-# Force project settings (setdefault loses if Cloud Run sets an empty/wrong module).
-os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings"
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 application = get_wsgi_application()
