@@ -14,10 +14,10 @@ export const projects: Project[] = [
     slug: 'puppies',
     title: 'Dog Breed Data Collection',
     summary:
-      'Fetches dog breed data from The Dog API into SQLite, with a searchable Django API.',
-    stack: ['Python', 'Django', 'SQLite', 'REST API'],
+      'Fetches dog breed data from The Dog API into SQLite, with a searchable Go API.',
+    stack: ['Go', 'SQLite', 'REST API'],
     body: [
-      'This project fetches dog profiles from a public API called The Dog API, it then stores them in SQLite via the Django ORM. It then exposes a searchable REST API with breed info.',
+      'This project fetches dog profiles from The Dog API, stores them in SQLite, and exposes a searchable Go REST API with breed information.',
       'A background script re-queries the Dog API on an interval, handles duplicates and accumulates unique breed data over time.',
     ],
   },

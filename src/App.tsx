@@ -43,8 +43,7 @@ export default function App() {
 
         {/*
           Live dog-breed search demo.
-          Hits the Django API via relative /api/puppies/… URLs
-          (Vite proxies in dev; Caddy proxies in production).
+          Calls the Go API directly using the configured service origin.
         */}
         <Route path="/puppies" element={<PuppiesPage />} />
 

@@ -1,9 +1,9 @@
 /**
- * api/puppies.ts — thin client for the Django puppy / dog-breed API.
+ * api/puppies.ts — thin client for the Go puppy / dog-breed API.
  *
- * Used by PuppiesPage. All paths are relative (`/api/…`) so:
- * - `npm run dev` → Vite proxy → Django :8080
- * - production → Caddy → Django :8080
+ * Used by PuppiesPage. Requests go directly to the Go service:
+ * - development defaults to `http://127.0.0.1:8080`
+ * - production uses `VITE_PUPPY_API_BASE_URL`
  *
  * Exports:
  * - TypeScript types matching the API JSON
@@ -51,6 +51,20 @@ export type PuppyListResponse = {
   results: Puppy[]
 }
 
+const API_BASE_URL = (
+  import.meta.env.VITE_PUPPY_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://127.0.0.1:8080' : '')
+).replace(/\/+$/, '')
+
+function apiUrl(path: string): string {
+  if (!API_BASE_URL) {
+    throw new Error(
+      'Puppy API is not configured. Set VITE_PUPPY_API_BASE_URL to the Go service origin when building the website.',
+    )
+  }
+  return `${API_BASE_URL}${path}`
+}
+
 function toQuery(params: PuppySearchParams): string {
   const search = new URLSearchParams()
   for (const [key, value] of Object.entries(params)) {
@@ -61,30 +75,28 @@ function toQuery(params: PuppySearchParams): string {
   const qs = search.toString()
   return qs ? `?${qs}` : ''
 }
-  // error handling
+
 function statusMessage(label: string, status: number): string {
-  // Caddy is up but upstream Django / static server is not
   if (status === 502 || status === 503 || status === 504) {
-    return `${label}: gateway error (${status}). The proxy is up but Django on :8080 (or serve on :9000) is probably down — restart with nohup after SSH login.`
+    return `${label}: Go API gateway error (${status}). Check that the Go service is running and reachable.`
   }
   if (status === 404) {
-    return `${label}: not found (404). Check the API route exists on Django.`
+    return `${label}: not found (404). Check that the Go API exposes this route.`
   }
   if (status === 400) {
     return `${label}: bad request (400). Check filter values.`
   }
   if (status >= 500) {
-    return `${label}: server error (${status}). Check Django logs (/tmp/django-8080.log).`
+    return `${label}: Go API server error (${status}). Check the Go service logs.`
   }
   return `${label}: request failed (${status}).`
 }
 
 async function readApiJson<T>(response: Response, label: string): Promise<T> {
-
- if (!response.ok) {
+  if (!response.ok) {
     throw new Error(statusMessage(label, response.status))
   }
- return (await response.json()) as T
+  return (await response.json()) as T
 }
 
 async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal): Promise<T> {
@@ -96,7 +108,7 @@ async function apiGetJson<T>(path: string, label: string, signal?: AbortSignal):
     if ((err as Error).name === 'AbortError') throw err
     // DNS / connection refused / offline / CORS, etc.
     throw new Error(
-      `${label}: network error — could not reach ${path}. Locally run Django on :8080; on EC2 check Caddy and nohup processes.`,
+      `${label}: network error — could not reach ${path}. Check the Go API URL, that the Go service is running, and that its CORS_ALLOWED_ORIGINS includes this website's origin.`,
     )
   }
   return readApiJson<T>(response, label)
@@ -110,7 +122,7 @@ export async function fetchPuppies(
   signal?: AbortSignal,
 ): Promise<PuppyListResponse> {
   const data = await apiGetJson<PuppyListResponse>(
-    `/api/puppies/${toQuery(params)}`,
+    apiUrl(`/api/puppies/${toQuery(params)}`),
     'Puppy list',
     signal,
   )
@@ -125,7 +137,11 @@ export async function fetchPuppies(
  * GET /api/puppies/filters/ — distinct sizes/groups + lifespan extent.
  */
 export async function fetchPuppyFilters(signal?: AbortSignal): Promise<PuppyFilters> {
-  const data = await apiGetJson<PuppyFilters>('/api/puppies/filters/', 'Puppy filters', signal)
+  const data = await apiGetJson<PuppyFilters>(
+    apiUrl('/api/puppies/filters/'),
+    'Puppy filters',
+    signal,
+  )
   if (!data || !Array.isArray(data.sizes) || !Array.isArray(data.breed_groups)) {
     throw new Error('Puppy filters: JSON shape was unexpected (missing sizes/breed_groups).')
   }
