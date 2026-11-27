@@ -31,7 +31,3 @@ dist-ssr
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
-
-# Python
-__pycache__/
-*.py[cod]
