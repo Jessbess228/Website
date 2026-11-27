@@ -81,13 +81,7 @@ fi
 envsubst '${PORT}' < /etc/nginx/templates/default.conf.template \
   > /etc/nginx/conf.d/default.conf
 
-if [ -n "${OTEL_EXPORTER_OTLP_ENDPOINT:-}" ]; then
-  OTEL_CMD="opentelemetry-instrument"
-else
-  OTEL_CMD=""
-fi
-
-$OTEL_CMD gunicorn \
+gunicorn \
   --chdir /opt/puppy \
   --bind 127.0.0.1:8081 \
   --workers 1 \

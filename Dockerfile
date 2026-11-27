@@ -21,10 +21,7 @@ RUN pip install --no-cache-dir \
     "django>=5.0" \
     "djangorestframework>=3.15" \
     "django-cors-headers>=4.0" \
-    python-dotenv \
-    opentelemetry-distro \
-    opentelemetry-exporter-otlp \
- && opentelemetry-bootstrap -a install
+    python-dotenv
 
 COPY puppy-api /opt/puppy
 COPY data/puppies.db /opt/puppy/data_files/puppies.db
@@ -38,11 +35,7 @@ ENV PORT=8080 \
     ENABLE_FETCH_SCHEDULER=false \
     DJANGO_ALLOWED_HOSTS=* \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    OTEL_SERVICE_NAME=website \
-    OTEL_TRACES_EXPORTER=otlp \
-    OTEL_METRICS_EXPORTER=otlp \
-    OTEL_LOGS_EXPORTER=none
+    PYTHONUNBUFFERED=1
 
 EXPOSE 8080
 ENTRYPOINT ["/docker-entrypoint.sh"]
