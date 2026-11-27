@@ -81,20 +81,6 @@ fi
 envsubst '${PORT}' < /etc/nginx/templates/default.conf.template \
   > /etc/nginx/conf.d/default.conf
 
-PUPPIES_DB="${PUPPIES_DATABASE_PATH:-/opt/puppy/data/puppies.db}"
-if [ ! -s "$PUPPIES_DB" ]; then
-  echo "ERROR: puppies.db is missing or empty at $PUPPIES_DB (image should COPY data/puppies.db)" >&2
-  exit 1
-fi
-if ! python3 -c "
-import sqlite3, sys
-con = sqlite3.connect('${PUPPIES_DB}')
-con.execute('SELECT 1 FROM dogs_puppy LIMIT 1')
-" 2>/dev/null; then
-  echo "ERROR: ${PUPPIES_DB} has no dogs_puppy table (use repo data/puppies.db in the image)" >&2
-  exit 1
-fi
-
 if [ -n "${OTEL_EXPORTER_OTLP_ENDPOINT:-}" ]; then
   OTEL_CMD="opentelemetry-instrument"
 else
